@@ -10,5 +10,5 @@ import java.util.UUID;
  * @author Daniel Santos
  * @since 13/11/2021
  */
-public interface WishlistRepository{}
-//extends ReactiveMongoRepository<Wishlist, UUID> {}
+public interface WishlistRepository extends ReactiveMongoRepository<Wishlist, UUID> {
+}

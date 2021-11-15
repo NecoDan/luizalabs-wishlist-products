@@ -29,6 +29,7 @@ public class DataJacksonConfig {
         mapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         configurarVisibilidadeDasPropriedades(mapper);
+        //configurarParsersDeData(mapper);
         return mapper;
     }
 
@@ -42,7 +43,8 @@ public class DataJacksonConfig {
     }
 
     private void configurarVisibilidadeDasPropriedades(ObjectMapper mapper) {
-        mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
+        mapper.setVisibility(mapper.getSerializationConfig()
+                .getDefaultVisibilityChecker()
                 .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
                 .withGetterVisibility(JsonAutoDetect.Visibility.DEFAULT)
                 .withSetterVisibility(JsonAutoDetect.Visibility.DEFAULT)

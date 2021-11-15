@@ -19,8 +19,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @With
 @Slf4j
-@Document(collection = "item")
-public class ItemWishlist {
+@Document(collection = "items")
+public class ItemWishlist implements IGenerateCreatedDate {
 
     @Id
     private UUID id;
@@ -37,4 +37,12 @@ public class ItemWishlist {
     @Field(name = "dt_created")
     private LocalDateTime dtCreated;
 
+    public ItemWishlist generateDtCreatedThis() {
+        generateDtCreated();
+        return this;
+    }
+
+    public void generateDtCreated() {
+        this.dtCreated = IGenerateCreatedDate.generateCreatedDt();
+    }
 }

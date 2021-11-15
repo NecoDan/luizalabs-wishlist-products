@@ -10,7 +10,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -42,9 +44,6 @@ public class Wishlist implements IGenerateCreatedDate {
     @Field(name = "itens")
     private List<ItemWishlist> itemWishlist;
 
-//    @Transient
-//    private TypeStatusSession typeStatusSession;
-
     public void generateDtCreated() {
         this.dtCreated = IGenerateCreatedDate.generateCreatedDt();
     }
@@ -54,17 +53,31 @@ public class Wishlist implements IGenerateCreatedDate {
         return this;
     }
 
-//    public Pauta beginSession(Instant fim) {
-//        session = Session.start(fim);
-//        log.info("Session: to open session {} with the date {}.", FormatterUtil.formatterLocalDateTimeFrom(session.getEnd()), FormatterUtil.formatterLocalDateTimeBy(session.getDtCreated()));
-//        generateTypeStatusSession();
-//        return this;
-//    }
+    public void addItemWishlist(ItemWishlist itemWishlist) {
+        inicializeItemWishlist();
+        this.itemWishlist.add(itemWishlist);
+    }
 
-//    public Wishlist product(Vote vote) {
-//        session.addVote(vote);
-//        return this;
-//    }
+    public Wishlist addItemWishlistThis(ItemWishlist itemWishlist) {
+        addItemWishlist(itemWishlist);
+        return this;
+    }
+
+    public void addAllItemWishlist(List<ItemWishlist> itemWishlists) {
+        this.itemWishlist.addAll(itemWishlists);
+    }
+
+    public Wishlist addAllItemWishlistThis(List<ItemWishlist> itemWishlists) {
+        inicializeItemWishlist();
+        addAllItemWishlist(itemWishlists);
+        return this;
+    }
+
+    private void inicializeItemWishlist() {
+        if (Objects.isNull(this.itemWishlist)) {
+            this.itemWishlist = new ArrayList<>();
+        }
+    }
 
     @Override
     public String toString() {
