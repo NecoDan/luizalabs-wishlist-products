@@ -18,7 +18,7 @@ public class ModelMapperConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-        var modelMapper = new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         modelMapper.createTypeMap(Wishlist.class, WishlistDto.class);
         modelMapper.createTypeMap(ItemWishlist.class, ItemWishlistDto.class);
         return modelMapper;
