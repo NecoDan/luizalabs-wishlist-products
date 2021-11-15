@@ -1,7 +1,7 @@
 package br.com.luizalabs.wishlist.products.controller.events;
 
 import br.com.luizalabs.wishlist.products.model.Wishlist;
-import io.swagger.v3.oas.annotations.Operation;
+//import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -27,11 +27,17 @@ public class StreamEventsController {
     private static final Integer DURATION_SECONDS = 5;
 
     @GetMapping(value = "/wishlist/produces", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @Operation(summary = "Searching all existing wishlist(s)", tags = "events-stream")
+//    @Operation(summary = "Searching all existing wishlist(s)", tags = "events-stream")
     public Flux<Tuple2<Long, Wishlist>> getWishlistByEvents() {
-        log.info("Running event stream wishlist(s)...");
+        log.info("[luizalabs-wishlist-products] [events]");
+        log.info("[luizalabs-wishlist-products] [events] | Running event stream wishlist(s)");
+
         Flux<Long> interval = Flux.interval(Duration.ofSeconds(DURATION_SECONDS));
+        log.info("[luizalabs-wishlist-products] [events] | Intervalo de tempo: {}", interval);
+
         Flux<Wishlist> events = null;//pautaReportService.getAll();
+        log.info("[luizalabs-wishlist-products] [events] | Response: {}", events);
+
         return Flux.zip(interval, events);
     }
 }

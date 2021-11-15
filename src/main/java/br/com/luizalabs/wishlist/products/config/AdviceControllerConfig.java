@@ -32,149 +32,148 @@ import java.util.stream.Collectors;
  * @author Daniel Santos
  * @since 13/11/2021
  */
-//@ControllerAdvice
+@ControllerAdvice
 @RequiredArgsConstructor
 @Slf4j
 public class AdviceControllerConfig {
 
-//    private final HttpServletRequest request;
+    @ExceptionHandler
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
+                                                             HttpStatus httpStatus, WebRequest request) {
+        exposeLogErrorFrom(ex);
 
-//    @ExceptionHandler
-//    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-//                                                             HttpStatus httpStatus, WebRequest request) {
-//        exposeLogErrorFrom(ex);
-//
-//        if (HttpStatus.INTERNAL_SERVER_ERROR.equals(httpStatus)) {
-//            request.setAttribute("javax.servlet.error.exception", ex, 0);
-//        }
-//
-//        ErrorResponseDto response = buildErrorApiResponse(ex.getMessage(), httpStatus.getReasonPhrase(), httpStatus);
-//        return ResponseEntity.status(httpStatus).body(Response.<ErrorResponseDto>builder().data(response).build());
+        if (HttpStatus.INTERNAL_SERVER_ERROR.equals(httpStatus)) {
+            request.setAttribute("javax.servlet.error.exception", ex, 0);
+        }
+
+        ErrorResponseDto response = buildErrorApiResponse(ex.getMessage(), httpStatus.getReasonPhrase(), httpStatus);
+        return ResponseEntity.status(httpStatus).body(Response.<ErrorResponseDto>builder().data(response).build());
+    }
+
+    //    @ExceptionHandler(Exception.class)
+    @ExceptionHandler
+    public ResponseEntity<Object> handleException(Throwable throwable) {
+
+        log.error(throwable.getMessage(), throwable);
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        ErrorResponseDto errorApiResponse = buildErrorApiResponse(throwable.getMessage(), httpStatus.getReasonPhrase(), httpStatus);
+
+        Response<ErrorResponseDto> response = Response.<ErrorResponseDto>builder().data(errorApiResponse).build();
+        return ResponseEntity.status(httpStatus).body(response);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> handleException(HttpException throwable) {
+
+        exposeLogErrorFrom(throwable);
+        ErrorResponseDto errorApiResponse = buildErrorApiResponse(throwable.getMessage(),
+                throwable.getHttpStatus().getReasonPhrase(), throwable.getHttpStatus());
+
+        Response<ErrorResponseDto> response = Response.<ErrorResponseDto>builder().data(errorApiResponse).build();
+        return ResponseEntity.status(throwable.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> handlerServerInputException(ServerWebInputException e) {
+
+        log.error(e.getMessage(), e);
+        ErrorResponseDto response = buildErrorApiResponse("missing a parameter.", e.getMessage(), e.getStatus());
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+
+        log.error(e.getMessage(), e);
+        String simpleName = Objects.isNull(e.getRequiredType()) ? "" : e.getRequiredType().getSimpleName();
+        String mensagem = String.format("Argument '%s' must be valid '%s' but it is '%s'.",
+                e.getName(), simpleName, e.getValue());
+
+        ErrorResponseDto response = buildErrorApiResponse(mensagem, e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> handleJsonProcessingException(JsonProcessingException e) {
+
+        log.error(e.getMessage(), e);
+        ErrorResponseDto response = buildErrorApiResponse("Invalid input JSON.", e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e) {
+
+        log.error(e.getMessage(), e);
+        String message = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .findFirst()
+                .orElse(e.getMessage());
+
+        ErrorResponseDto response = buildErrorApiResponse(message, e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
+
+        ErrorResponseDto response = buildErrorApiResponse(ex.getMessage(), ex.getMessage(), status);
+        response.setErrors(errors);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    private ErrorResponseDto buildErrorApiResponse(String message, String details,
+                                                   HttpStatus httpStatus) {
+
+        return ErrorResponseDto.builder()
+                .message(message)
+                .messageLog(message)
+                .details(details.toUpperCase())
+                .timestamp(FormatterUtil.formatterLocalDateTimeBy(LocalDateTime.now()))
+                .statusCode(String.valueOf(httpStatus.value()))
+                .status(httpStatus.toString())
+                .path(getPathUri())
+                .build();
+    }
+
+    private StackTraceElement buildStackTraceElement() {
+        return new StackTraceElement("", "", "", 0);
+    }
+
+    private void exposeLogErrorFrom(Exception throwable) {
+        Optional<StackTraceElement> first = Arrays.stream(throwable.getStackTrace()).findFirst();
+        StackTraceElement stackTraceElement = first.orElse(buildStackTraceElement());
+
+        log.error("Error na execução do recurso: {}", throwable.getMessage());
+        log.error("Error de execução: class {} | line {} | method_name {}| file_name_class {}.",
+                stackTraceElement.getClassName(), stackTraceElement.getLineNumber(), stackTraceElement.getMethodName(),
+                stackTraceElement.getFileName());
+    }
+
+    private String getPathUri() {
+        return getFullRouteRequest();
+    }
+
+//    public String getVerbMethodRequest() {
+//        return this.request.getMethod();
 //    }
 //
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<Object> handleException(Throwable throwable) {
-//
-//        log.error(throwable.getMessage(), throwable);
-//        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-//        ErrorResponseDto errorApiResponse = buildErrorApiResponse(throwable.getMessage(), httpStatus.getReasonPhrase(), httpStatus);
-//
-//        Response<ErrorResponseDto> response = Response.<ErrorResponseDto>builder().data(errorApiResponse).build();
-//        return ResponseEntity.status(httpStatus).body(response);
+//    public String pathRequestURI() {
+//        return this.request.getRequestURI().substring(this.request.getContextPath().length());
 //    }
-//
-//    @ExceptionHandler
-//    public ResponseEntity<Object> handleException(HttpException throwable) {
-//
-//        exposeLogErrorFrom(throwable);
-//        ErrorResponseDto errorApiResponse = buildErrorApiResponse(throwable.getMessage(),
-//                throwable.getHttpStatus().getReasonPhrase(), throwable.getHttpStatus());
-//
-//        Response<ErrorResponseDto> response = Response.<ErrorResponseDto>builder().data(errorApiResponse).build();
-//        return ResponseEntity.status(throwable.getHttpStatus()).body(response);
-//    }
-//
-//    @ExceptionHandler
-//    public ResponseEntity<Object> handlerServerInputException(ServerWebInputException e) {
-//
-//        log.error(e.getMessage(), e);
-//        ErrorResponseDto response = buildErrorApiResponse("missing a parameter.", e.getMessage(), e.getStatus());
-//        return ResponseEntity.badRequest().body(response);
-//    }
-//
-//    @ExceptionHandler
-//    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-//
-//        log.error(e.getMessage(), e);
-//        String simpleName = Objects.isNull(e.getRequiredType()) ? "" : e.getRequiredType().getSimpleName();
-//        String mensagem = String.format("Argument '%s' must be valid '%s' but it is '%s'.",
-//                e.getName(), simpleName, e.getValue());
-//
-//        ErrorResponseDto response = buildErrorApiResponse(mensagem, e.getMessage(), HttpStatus.BAD_REQUEST);
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler
-//    public ResponseEntity<Object> handleJsonProcessingException(JsonProcessingException e) {
-//
-//        log.error(e.getMessage(), e);
-//        ErrorResponseDto response = buildErrorApiResponse("Invalid input JSON.", e.getMessage(), HttpStatus.BAD_REQUEST);
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    @ExceptionHandler
-//    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e) {
-//
-//        log.error(e.getMessage(), e);
-//        String message = e.getConstraintViolations().stream()
-//                .map(ConstraintViolation::getMessage)
-//                .findFirst()
-//                .orElse(e.getMessage());
-//
-//        ErrorResponseDto response = buildErrorApiResponse(message, e.getMessage(), HttpStatus.BAD_REQUEST);
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-////    @ExceptionHandler
-//    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-//                                                                  HttpHeaders headers,
-//                                                                  HttpStatus status,
-//                                                                  WebRequest request) {
-//
-//        List<String> errors = ex.getBindingResult()
-//                .getFieldErrors()
-//                .stream()
-//                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-//                .collect(Collectors.toList());
-//
-//        ErrorResponseDto response = buildErrorApiResponse(ex.getMessage(), ex.getMessage(), status);
-//        response.setErrors(errors);
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    private ErrorResponseDto buildErrorApiResponse(String message, String details,
-//                                                   HttpStatus httpStatus) {
-//
-//        return ErrorResponseDto.builder()
-//                .message(message)
-//                .messageLog(message)
-//                .details(details.toUpperCase())
-//                .timestamp(FormatterUtil.formatterLocalDateTimeBy(LocalDateTime.now()))
-//                .statusCode(String.valueOf(httpStatus.value()))
-//                .status(httpStatus.toString())
-//                .path(getPathUri())
-//                .build();
-//    }
-//
-//    private StackTraceElement buildStackTraceElement() {
-//        return new StackTraceElement("", "", "", 0);
-//    }
-//
-//    private void exposeLogErrorFrom(Exception throwable) {
-//        Optional<StackTraceElement> first = Arrays.stream(throwable.getStackTrace()).findFirst();
-//        StackTraceElement stackTraceElement = first.orElse(buildStackTraceElement());
-//
-//        log.error("Error na execução do recurso: {}", throwable.getMessage());
-//        log.error("Error de execução: class {} | line {} | method_name {}| file_name_class {}.",
-//                stackTraceElement.getClassName(), stackTraceElement.getLineNumber(), stackTraceElement.getMethodName(),
-//                stackTraceElement.getFileName());
-//    }
-//
-//    private String getPathUri() {
-//        return getFullRouteRequest();
-//    }
-//
-////    public String getVerbMethodRequest() {
-////        return request.getMethod();
-////    }
-////
-////    public String pathRequestURI() {
-////        return request.getRequestURI().substring(request.getContextPath().length());
-////    }
-//
-//    public String getFullRouteRequest() {
-//        return "";
-////        return "{".concat(getVerbMethodRequest().concat("}: ").concat(pathRequestURI()));
-//    }
+
+    public String getFullRouteRequest() {
+        return "";
+//        return "{".concat(getVerbMethodRequest().concat("}: ").concat(pathRequestURI()));
+    }
 }

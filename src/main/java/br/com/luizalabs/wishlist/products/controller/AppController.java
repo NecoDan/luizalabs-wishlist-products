@@ -24,6 +24,7 @@ public class AppController {
 
     @GetMapping
     public ResponseEntity<String> getAppMessage() {
+        log.info("[luizalabs-wishlist-products] [events] | {}", appMessage);
         return ResponseEntity.ok(appMessage);
     }
 }
