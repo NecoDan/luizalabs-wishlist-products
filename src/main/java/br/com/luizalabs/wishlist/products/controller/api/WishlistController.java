@@ -1,13 +1,17 @@
 package br.com.luizalabs.wishlist.products.controller.api;
 
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
+import br.com.luizalabs.wishlist.products.dto.wishlist.request.ProductRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
+import br.com.luizalabs.wishlist.products.dto.wishlist.response.ResponseAcceptedDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
+import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.service.IGenerateWishlistService;
 import br.com.luizalabs.wishlist.products.service.IWishlistReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +26,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/v1/wishlist")
+@CrossOrigin(origins = "*")
 @Slf4j
 @RequiredArgsConstructor
 public class WishlistController {
@@ -62,6 +67,39 @@ public class WishlistController {
         return wishlistReportService.getOneBy(id)
                 .map(wishlistMapper::toWishlistDtoFrom)
                 .doOnSuccess(p -> showLogFrom(String.format("Returning a specific wish list by {id} = %s", id), p));
+    }
+
+    @PutMapping("/{id_wishlist}/products/add/")
+    @Operation(summary = "Call to add new product for an existing wish list.", tags = "wishlist")
+    public Mono<ResponseEntity<ResponseAcceptedDto>> addProduct(@Valid @PathVariable("id_wishlist") String idWishlist,
+                                                                @Valid @RequestBody ProductRequest productRequest) {
+
+        log.info("[luizalabs-wishlist-products] | Add product for an existing wish list by wishlist id and product request");
+
+        return null;
+    }
+
+    @DeleteMapping("/{id_wishlist}/products/remove/{id_product}")
+    @Operation(summary = "Call to remove product for an existing wish list.", tags = "wishlist")
+    public Mono<ResponseEntity<ResponseAcceptedDto>> deleteProduct(@Valid @PathVariable("id_wishlist") String idWishlist,
+                                                                   @Valid @PathVariable("id_product") String idProduct) {
+
+        log.info("[luizalabs-wishlist-products] | Remove product for an existing wish list by wishlist id and product id");
+
+        return generateWishlistService.removeProduct(idWishlist, idProduct)
+                .map(wishlist -> buildResponseAcceptedDto(wishlist, idProduct))
+                .map(response -> ResponseEntity.status(HttpStatus.ACCEPTED)
+                        .body(response))
+                .doOnSuccess(response -> log.info("[luizalabs-wishlist-products] | Product successfully removed from wishlist: {}", response));
+    }
+
+    private ResponseAcceptedDto buildResponseAcceptedDto(Wishlist wishlist, String idProduct) {
+
+        final boolean accepted = wishlist.getItemWishlist()
+                .stream()
+                .anyMatch(i -> !StringUtils.equalsIgnoreCase(i.getProductId(), idProduct));
+
+        return ResponseAcceptedDto.builder().build().loadContentProcessed(accepted);
     }
 
     private void showLogFrom(String message, ResponseEntity<WishlistDto> response) {

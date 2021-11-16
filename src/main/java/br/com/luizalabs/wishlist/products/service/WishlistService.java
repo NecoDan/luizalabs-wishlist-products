@@ -2,7 +2,6 @@ package br.com.luizalabs.wishlist.products.service;
 
 import br.com.luizalabs.wishlist.products.exceptions.WishlistNotFoundException;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
-import br.com.luizalabs.wishlist.products.repository.ItemWishlistRepository;
 import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +24,11 @@ public class WishlistService implements IWishlistService {
     @Override
     public Flux<Wishlist> findAll() {
         return this.wishlistRepository.findAll();
+    }
+
+    @Override
+    public Mono<Wishlist> getOneBy(String id) {
+        return findById(id);
     }
 
     @Override
@@ -56,10 +60,5 @@ public class WishlistService implements IWishlistService {
     @Transactional
     public Mono<Void> delete(String id) {
         return findById(id).flatMap(wishlistRepository::delete);
-    }
-
-    @Override
-    public Long totalElementsWishList(String id) {
-        return 0L;
     }
 }

@@ -2,6 +2,7 @@ package br.com.luizalabs.wishlist.products.config;
 
 
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
+import br.com.luizalabs.wishlist.products.dto.wishlist.request.ProductRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.ItemWishlistDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
@@ -26,6 +27,7 @@ public class ModelMapperConfig {
         modelMapper.createTypeMap(ItemWishlist.class, ItemWishlistDto.class);
         modelMapper.createTypeMap(ItemWishlistRequest.class, ItemWishlist.class);
         modelMapper.createTypeMap(WishlistRequest.class, Wishlist.class);
+        modelMapper.createTypeMap(WishlistRequest.class, ProductRequest.class);
 
         return modelMapper;
     }

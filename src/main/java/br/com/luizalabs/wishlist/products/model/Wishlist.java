@@ -1,6 +1,5 @@
 package br.com.luizalabs.wishlist.products.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -9,7 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,6 @@ import java.util.Objects;
 public class Wishlist implements IGenerateCreatedDate {
 
     @Id
-    @Field("_id")
     private String id;
 
     @Field(name = "client_id")
@@ -40,7 +37,10 @@ public class Wishlist implements IGenerateCreatedDate {
     @Field(name = "dt_created")
     private LocalDateTime dtCreated;
 
-    @Field(name = "items")
+    @Field(name = "total_products")
+    private int totalProducts;
+
+    @Field(name = "item_products")
     private List<ItemWishlist> itemWishlist;
 
     public void generateId() {
@@ -81,6 +81,12 @@ public class Wishlist implements IGenerateCreatedDate {
         return this;
     }
 
+    public void removeOneItemWishList(ItemWishlist itemWishlist) {
+        if (Objects.isNull(this.itemWishlist))
+            return;
+        this.itemWishlist.remove(itemWishlist);
+    }
+
     public void popularItemsWishList() {
         if (Objects.isNull(this.itemWishlist))
             return;
@@ -92,6 +98,15 @@ public class Wishlist implements IGenerateCreatedDate {
         if (Objects.isNull(this.itemWishlist)) {
             this.itemWishlist = new ArrayList<>();
         }
+    }
+
+    public void loadTotalProductsItems() {
+        inicializeItemWishlist();
+        this.totalProducts = this.itemWishlist.size();
+    }
+
+    public boolean isTotalProductsAddedToInvalidWishlist(long maxLimitProducts) {
+        return (Objects.nonNull(this.itemWishlist) && this.itemWishlist.size() > maxLimitProducts);
     }
 
     @Override

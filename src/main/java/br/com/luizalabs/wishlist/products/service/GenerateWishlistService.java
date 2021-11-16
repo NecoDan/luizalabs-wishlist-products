@@ -1,8 +1,7 @@
 package br.com.luizalabs.wishlist.products.service;
 
-import br.com.luizalabs.wishlist.products.exceptions.WishlistUnprocessableEntityException;
+import br.com.luizalabs.wishlist.products.model.ItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
-import br.com.luizalabs.wishlist.products.properties.TransactionProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author Daniel Santos
@@ -21,47 +21,61 @@ import java.util.Objects;
 public class GenerateWishlistService implements IGenerateWishlistService {
 
     private final IWishlistService wishlistService;
-    private final TransactionProperties transactionProperties;
+    private final IValidateWishlist validateWishlist;
 
     @Override
     public Mono<Wishlist> create(Wishlist wishlist) {
 
-        validateParams(wishlist);
+        validateWishlist.validateParameters(wishlist);
         wishlist.generateId();
         wishlist.generateDtCreated();
         wishlist.popularItemsWishList();
+        wishlist.loadTotalProductsItems();
 
+        return saveWishList(wishlist);
+    }
+
+    @Override
+    public Mono<Wishlist> removeProduct(String idWishlist, String idProduct) {
+
+        validateWishlist.validateParametersRemoveProduct(idWishlist, idProduct);
+        return wishlistService.getOneBy(idWishlist).flatMap(wishlist -> perfomProductRemoval(wishlist, idProduct));
+    }
+
+    @Override
+    public Mono<Wishlist> perfomProductRemoval(Wishlist wishlist, String idProduct) {
+
+        String strMsgDefault = " Trying to remove product in wish list. ";
+
+        if (Objects.isNull(wishlist)) {
+            validateWishlist.throwsValidationErrorAndLogError(strMsgDefault + "Wishlist is invalid and/or " +
+                    "nonexistent (null).");
+        }
+
+        Optional<ItemWishlist> optional = wishlist.getItemWishlist()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(i -> StringUtils.equalsIgnoreCase(i.getProductId(), idProduct))
+                .findFirst();
+
+        if (!optional.isPresent()) {
+            validateWishlist.throwsValidationErrorAndLogError(String.format("Erro removing product in wish list. " +
+                    "Product not found widh id: %s", idProduct));
+        }
+
+        return performRemoveProduct(wishlist, optional.get());
+    }
+
+    @Override
+    public Mono<Wishlist> performRemoveProduct(Wishlist wishlist, ItemWishlist itemWishlist) {
+
+        wishlist.removeOneItemWishList(itemWishlist);
+        wishlist.loadTotalProductsItems();
+        return saveWishList(wishlist);
+    }
+
+    private Mono<Wishlist> saveWishList(Wishlist wishlist) {
         return this.wishlistService.save(wishlist);
     }
 
-    public void validateParams(Wishlist wishlist) {
-        String strMsgDefault = " Trying to create wish list. ";
-
-        if (Objects.isNull(wishlist)) {
-            throwsValidationErrorAndLogError(strMsgDefault + "Wishlist is invalid and/or nonexistent (null).");
-        }
-
-        if (Objects.isNull(wishlist.getClientId())) {
-            throwsValidationErrorAndLogError(strMsgDefault + "The wish list cliend id is invalid and / or not informed (null).");
-        }
-
-        if (StringUtils.isEmpty(wishlist.getTitle())) {
-            throwsValidationErrorAndLogError(strMsgDefault + "The wish list title is invalid and / or not informed.");
-        }
-
-        if (isTotalProductsAddedToInvalidWishlist(wishlist)) {
-            throwsValidationErrorAndLogError(strMsgDefault + "Total products added to wish list must be less than or equal to "
-                    + transactionProperties.getLimitMaxProductsWishlist());
-        }
-    }
-
-    private boolean isTotalProductsAddedToInvalidWishlist(Wishlist wishlist) {
-        return (Objects.nonNull(wishlist.getItemWishlist())
-                && wishlist.getItemWishlist().size() > transactionProperties.getLimitMaxProductsWishlist());
-    }
-
-    private void throwsValidationErrorAndLogError(String msg) {
-        log.error("[luizalabs-wishlist-products] | GenerateWishlistService | Error: {}", msg);
-        throw new WishlistUnprocessableEntityException(msg);
-    }
 }

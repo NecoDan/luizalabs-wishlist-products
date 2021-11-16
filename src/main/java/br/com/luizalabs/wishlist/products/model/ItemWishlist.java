@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 public class ItemWishlist implements IGenerateIdentifier, IGenerateCreatedDate {
 
     @Id
-    @Field("_id")
     private String id;
 
     @Field(name = "product_id")

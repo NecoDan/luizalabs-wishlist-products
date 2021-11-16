@@ -8,6 +8,8 @@ public interface IWishlistService {
 
     Flux<Wishlist> findAll();
 
+    Mono<Wishlist> getOneBy(String id);
+
     Mono<Wishlist> findById(String id);
 
     Flux<Wishlist> findByClientId(String idClient);
@@ -17,6 +19,4 @@ public interface IWishlistService {
     Mono<Void> update(Wishlist wishlist);
 
     Mono<Void> delete(String id);
-
-    Long totalElementsWishList(String id);
 }

@@ -11,9 +11,13 @@ import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.properties.TransactionProperties;
 import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
 import br.com.luizalabs.wishlist.products.service.GenerateWishlistService;
+import br.com.luizalabs.wishlist.products.service.ValidateWishlist;
 import br.com.luizalabs.wishlist.products.service.WishlistReportService;
 import br.com.luizalabs.wishlist.products.service.WishlistService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +59,7 @@ public class WishlistControllerWebClientTest {
     private ModelMapper modelMapper;
     private WishlistMapper wishlistMapper;
     private TransactionProperties transactionProperties;
+    private ValidateWishlist validateWishlist;
 
     @Autowired
     private WebTestClient webTestClient;
@@ -82,7 +87,7 @@ public class WishlistControllerWebClientTest {
         this.wishlistReportService = new WishlistReportService(wishlistService);
 
         this.transactionProperties = Mockito.mock(TransactionProperties.class);
-        this.generateWishlistService = new GenerateWishlistService(wishlistService, transactionProperties);
+        this.generateWishlistService = new GenerateWishlistService(wishlistService, validateWishlist);
 
         webTestClient = WebTestClient
                 .bindToController(new WishlistController(generateWishlistService, wishlistReportService, wishlistMapper))

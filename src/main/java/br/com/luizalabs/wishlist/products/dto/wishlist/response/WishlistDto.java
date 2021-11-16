@@ -31,6 +31,6 @@ public class WishlistDto {
     @JsonProperty("dt_created")
     private LocalDateTime dtCreated;
 
-    @JsonProperty("itens")
+    @JsonProperty("itens_product")
     private List<ItemWishlistDto> itemWishlist;
 }

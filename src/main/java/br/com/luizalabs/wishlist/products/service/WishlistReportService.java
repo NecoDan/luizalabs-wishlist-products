@@ -28,6 +28,6 @@ public class WishlistReportService implements IWishlistReportService {
 
     @Override
     public Mono<Wishlist> getOneBy(String id) {
-        return this.wishlistService.findById(id);
+        return this.wishlistService.getOneBy(id);
     }
 }
