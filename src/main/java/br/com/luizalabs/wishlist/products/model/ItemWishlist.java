@@ -1,13 +1,14 @@
 package br.com.luizalabs.wishlist.products.model;
 
-import lombok.*;
-import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * @author Daniel Santos
@@ -17,25 +18,25 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@With
-@Slf4j
 @Document(collection = "items")
-public class ItemWishlist implements IGenerateCreatedDate {
+public class ItemWishlist implements IGenerateIdentifier, IGenerateCreatedDate {
 
     @Id
-    private UUID id;
-
-    @Field(name = "item")
-    private Long item;
+    @Field("_id")
+    private String id;
 
     @Field(name = "product_id")
-    private UUID productId;
+    private String productId;
 
     @Field(name = "product_name")
     private String productName;
 
     @Field(name = "dt_created")
     private LocalDateTime dtCreated;
+
+    public void generateId() {
+        this.id = IGenerateIdentifier.generateStringId();
+    }
 
     public ItemWishlist generateDtCreatedThis() {
         generateDtCreated();

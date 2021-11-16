@@ -1,4 +1,4 @@
-package br.com.luizalabs.wishlist.products.dto.wishlist;
+package br.com.luizalabs.wishlist.products.dto.wishlist.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -19,12 +19,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ItemWishlistDto {
 
-    private UUID id;
-
-    private Long item;
+    @JsonProperty("item_id")
+    private String id;
 
     @JsonProperty("product_id")
-    private UUID productId;
+    private String productId;
 
     @JsonProperty("product_name")
     private String productName;

@@ -1,19 +1,19 @@
 package br.com.luizalabs.wishlist.products.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 
 /**
@@ -24,16 +24,15 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@With
-@Slf4j
 @Document(collection = "wishlist")
 public class Wishlist implements IGenerateCreatedDate {
 
     @Id
-    private UUID id;
+    @Field("_id")
+    private String id;
 
     @Field(name = "client_id")
-    private UUID clientId;
+    private String clientId;
 
     @Field(name = "title")
     private String title;
@@ -41,8 +40,12 @@ public class Wishlist implements IGenerateCreatedDate {
     @Field(name = "dt_created")
     private LocalDateTime dtCreated;
 
-    @Field(name = "itens")
+    @Field(name = "items")
     private List<ItemWishlist> itemWishlist;
+
+    public void generateId() {
+        this.id = IGenerateIdentifier.generateStringId();
+    }
 
     public void generateDtCreated() {
         this.dtCreated = IGenerateCreatedDate.generateCreatedDt();
@@ -71,6 +74,13 @@ public class Wishlist implements IGenerateCreatedDate {
         inicializeItemWishlist();
         addAllItemWishlist(itemWishlists);
         return this;
+    }
+
+    public void popularItemsWishList() {
+        if (Objects.isNull(this.itemWishlist))
+            return;
+        this.itemWishlist.forEach(ItemWishlist::generateId);
+        this.itemWishlist.forEach(ItemWishlist::generateDtCreatedThis);
     }
 
     private void inicializeItemWishlist() {

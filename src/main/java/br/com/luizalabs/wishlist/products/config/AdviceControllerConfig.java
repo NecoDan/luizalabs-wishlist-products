@@ -19,6 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ServerWebInputException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
@@ -37,21 +38,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdviceControllerConfig {
 
-    @ExceptionHandler
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-                                                             HttpStatus httpStatus, WebRequest request) {
-        exposeLogErrorFrom(ex);
+    private final HttpServletRequest request;
 
-        if (HttpStatus.INTERNAL_SERVER_ERROR.equals(httpStatus)) {
-            request.setAttribute("javax.servlet.error.exception", ex, 0);
-        }
-
-        ErrorResponseDto response = buildErrorApiResponse(ex.getMessage(), httpStatus.getReasonPhrase(), httpStatus);
-        return ResponseEntity.status(httpStatus).body(Response.<ErrorResponseDto>builder().data(response).build());
-    }
-
-    //    @ExceptionHandler(Exception.class)
-    @ExceptionHandler
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Throwable throwable) {
 
         log.error(throwable.getMessage(), throwable);
@@ -164,16 +153,15 @@ public class AdviceControllerConfig {
         return getFullRouteRequest();
     }
 
-//    public String getVerbMethodRequest() {
-//        return this.request.getMethod();
-//    }
-//
-//    public String pathRequestURI() {
-//        return this.request.getRequestURI().substring(this.request.getContextPath().length());
-//    }
+    public String getVerbMethodRequest() {
+        return this.request.getMethod();
+    }
+
+    public String pathRequestURI() {
+        return this.request.getRequestURI().substring(this.request.getContextPath().length());
+    }
 
     public String getFullRouteRequest() {
-        return "";
-//        return "{".concat(getVerbMethodRequest().concat("}: ").concat(pathRequestURI()));
+        return "{".concat(getVerbMethodRequest().concat("}: ").concat(pathRequestURI()));
     }
 }

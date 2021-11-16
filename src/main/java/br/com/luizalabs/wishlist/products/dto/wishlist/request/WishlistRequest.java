@@ -1,4 +1,4 @@
-package br.com.luizalabs.wishlist.products.dto.wishlist;
+package br.com.luizalabs.wishlist.products.dto.wishlist.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,18 +17,14 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WishlistDto {
-
-    private UUID id;
+public class WishlistRequest {
 
     @JsonProperty("client_id")
-    private UUID clientId;
+    private String clientId;
 
+    @JsonProperty("title")
     private String title;
 
-    @JsonProperty("dt_created")
-    private LocalDateTime dtCreated;
-
     @JsonProperty("itens")
-    private List<ItemWishlistDto> itemWishlistDtoList;
+    private List<ItemWishlistRequest> itemWishlist;
 }

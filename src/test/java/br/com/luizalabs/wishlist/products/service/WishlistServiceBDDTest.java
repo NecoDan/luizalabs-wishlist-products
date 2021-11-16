@@ -56,7 +56,7 @@ public class WishlistServiceBDDTest {
         BDDMockito.when(wishlistRepository.findAll())
                 .thenReturn(Flux.just(wishlist));
 
-        BDDMockito.when(wishlistRepository.findById(ArgumentMatchers.any(UUID.class)))
+        BDDMockito.when(wishlistRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.just(wishlist));
 
         BDDMockito.when(wishlistRepository.save(WishlistCreator.createdValidWishListToBeSaved(LIST_NAME)))
@@ -112,7 +112,7 @@ public class WishlistServiceBDDTest {
     @DisplayName("findById returns a Mono with wishlist when it exists")
     void findByIdReturnMonoWishlistWhenSuccessful() {
 
-        StepVerifier.create(wishlistService.findById(UUID.randomUUID()))
+        StepVerifier.create(wishlistService.findById(UUID.randomUUID().toString()))
                 .expectSubscription()
                 .expectNext(wishlist)
                 .verifyComplete();
@@ -130,10 +130,10 @@ public class WishlistServiceBDDTest {
     @Test
     @DisplayName("findById returns Mono error when pauta does not exist")
     void findByIdReturnMonoErrorWhenEmptyMonoIsReturned() {
-        BDDMockito.when(wishlistRepository.findById(ArgumentMatchers.any(UUID.class)))
+        BDDMockito.when(wishlistRepository.findById(ArgumentMatchers.anyString()))
                 .thenReturn(Mono.empty());
 
-        StepVerifier.create(wishlistService.findById(UUID.randomUUID()))
+        StepVerifier.create(wishlistService.findById(UUID.randomUUID().toString()))
                 .expectSubscription()
                 .expectError(WishlistNotFoundException.class)
                 .verify();

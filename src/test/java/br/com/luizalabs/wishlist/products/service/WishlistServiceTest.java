@@ -5,6 +5,8 @@ import br.com.luizalabs.wishlist.products.exceptions.WishlistNotFoundException;
 import br.com.luizalabs.wishlist.products.model.ItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,14 +21,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Daniel Santos
  * @since 15/11/2021
  */
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class WishlistServiceTest {
 
@@ -54,11 +56,21 @@ class WishlistServiceTest {
     @DisplayName("should search wishlist findById returning error")
     void shouldSearchPautaReturningError() {
 
-        when(wishlistRepository.findById(any(UUID.class)))
+        when(wishlistRepository.findById(anyString()))
                 .thenReturn(Mono.empty());
 
         assertThrows(WishlistNotFoundException.class,
-                () -> wishlistService.findById(UUID.randomUUID()).block()
+                () -> wishlistService.findById(UUID.randomUUID().toString()).block()
         );
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("generate json value from object wishlist")
+    void generateJsonValueFromObjectWishlist() {
+        String value = WishlistCreator
+                .generateJsonValueFromObjectWishlist(WishlistCreator.createdValidWishListToBeSaved("Compras particular"));
+        log.info("Result value from object to json: {}", value);
+        assertNotNull(value);
     }
 }

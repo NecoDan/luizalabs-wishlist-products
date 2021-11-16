@@ -1,10 +1,13 @@
 package br.com.luizalabs.wishlist.products;
 
 
-import br.com.luizalabs.wishlist.products.dto.wishlist.ItemWishlistDto;
-import br.com.luizalabs.wishlist.products.dto.wishlist.WishlistDto;
+import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
+import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
+import br.com.luizalabs.wishlist.products.dto.wishlist.response.ItemWishlistDto;
+import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
 import br.com.luizalabs.wishlist.products.model.ItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -17,7 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +34,9 @@ public class WishlistCreator {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.createTypeMap(Wishlist.class, WishlistDto.class);
         modelMapper.createTypeMap(ItemWishlist.class, ItemWishlistDto.class);
+        modelMapper.createTypeMap(ItemWishlistRequest.class, ItemWishlist.class);
+        modelMapper.createTypeMap(WishlistRequest.class, Wishlist.class);
+
         return modelMapper;
     }
 
@@ -42,14 +47,15 @@ public class WishlistCreator {
     public static Wishlist createdValidWishListNoItems(String title) {
 
         return Wishlist.builder()
-                .id(UUID.randomUUID())
-                .clientId(UUID.randomUUID())
+                .id(UUID.randomUUID().toString())
+                .clientId(UUID.randomUUID().toString())
                 .title(title)
                 .build()
                 .generateDtCreatedThis();
     }
 
     public static Wishlist createdValidWishListToBeSaved(String title) {
+
         List<ItemWishlist> itemWishlists = Arrays.asList(WishlistCreator.createdItemWishlist(UUID.randomUUID(),
                 "Tenis Adidas Serie XXXX"),
                 WishlistCreator.createdItemWishlist(UUID.randomUUID(),
@@ -63,11 +69,15 @@ public class WishlistCreator {
     public static ItemWishlist createdItemWishlist(UUID idProduct, String nameProduct) {
 
         return ItemWishlist.builder()
-                .id(UUID.randomUUID())
-                .productId(idProduct)
+                .id(UUID.randomUUID().toString())
+                .productId(idProduct.toString())
                 .productName(nameProduct)
                 .build()
                 .generateDtCreatedThis();
+    }
+
+    public static String generateJsonValueFromObjectWishlist(Wishlist wishlist) throws JsonProcessingException {
+        return inicializeObjectMapper().writeValueAsString(wishlist);
     }
 
     private static ObjectMapper inicializeObjectMapper() {

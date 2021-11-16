@@ -29,7 +29,6 @@ public class DataJacksonConfig {
         mapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         configurarVisibilidadeDasPropriedades(mapper);
-        //configurarParsersDeData(mapper);
         return mapper;
     }
 
