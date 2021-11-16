@@ -1,5 +1,7 @@
 package br.com.luizalabs.wishlist.products.service;
 
+import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
+import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
 import br.com.luizalabs.wishlist.products.model.ItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class GenerateWishlistService implements IGenerateWishlistService {
 
     private final IWishlistService wishlistService;
     private final IValidateWishlist validateWishlist;
+    private final WishlistMapper wishlistMapper;
 
     @Override
     public Mono<Wishlist> create(Wishlist wishlist) {
@@ -30,6 +33,25 @@ public class GenerateWishlistService implements IGenerateWishlistService {
         wishlist.generateId();
         wishlist.generateDtCreated();
         wishlist.popularItemsWishList();
+        wishlist.loadTotalProductsItems();
+
+        return saveWishList(wishlist);
+    }
+
+    @Override
+    public Mono<Wishlist> addProduct(String idWishlist, ItemWishlistRequest itemWishlistRequest) {
+
+        validateWishlist.validateParametersAddProduct(idWishlist, itemWishlistRequest);
+        return wishlistService.getOneBy(idWishlist).flatMap(wishlist -> perfomProductAdd(wishlist, itemWishlistRequest));
+    }
+
+    public Mono<Wishlist> perfomProductAdd(Wishlist wishlist, ItemWishlistRequest itemWishlistRequest) {
+
+        ItemWishlist itemWishlist = wishlistMapper.toItemWishlistFrom(itemWishlistRequest);
+        itemWishlist.generateId();
+        itemWishlist.generateDtCreatedThis();
+
+        wishlist.addItemWishlist(itemWishlist);
         wishlist.loadTotalProductsItems();
 
         return saveWishList(wishlist);
@@ -45,13 +67,7 @@ public class GenerateWishlistService implements IGenerateWishlistService {
     @Override
     public Mono<Wishlist> perfomProductRemoval(Wishlist wishlist, String idProduct) {
 
-        String strMsgDefault = " Trying to remove product in wish list. ";
-
-        if (Objects.isNull(wishlist)) {
-            validateWishlist.throwsValidationErrorAndLogError(strMsgDefault + "Wishlist is invalid and/or " +
-                    "nonexistent (null).");
-        }
-
+        performValidateWishList(wishlist);
         Optional<ItemWishlist> optional = wishlist.getItemWishlist()
                 .stream()
                 .filter(Objects::nonNull)
@@ -72,6 +88,15 @@ public class GenerateWishlistService implements IGenerateWishlistService {
         wishlist.removeOneItemWishList(itemWishlist);
         wishlist.loadTotalProductsItems();
         return saveWishList(wishlist);
+    }
+
+    private void performValidateWishList(Wishlist wishlist) {
+        String strMsgDefault = " Trying to remove product in wish list. ";
+
+        if (Objects.isNull(wishlist)) {
+            validateWishlist.throwsValidationErrorAndLogError(strMsgDefault + "Wishlist is invalid and/or " +
+                    "nonexistent (null).");
+        }
     }
 
     private Mono<Wishlist> saveWishList(Wishlist wishlist) {

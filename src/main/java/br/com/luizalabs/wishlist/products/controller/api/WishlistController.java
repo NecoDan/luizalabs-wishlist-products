@@ -69,14 +69,18 @@ public class WishlistController {
                 .doOnSuccess(p -> showLogFrom(String.format("Returning a specific wish list by {id} = %s", id), p));
     }
 
-    @PutMapping("/{id_wishlist}/products/add/")
+    @PutMapping("/{id_wishlist}/products/add")
     @Operation(summary = "Call to add new product for an existing wish list.", tags = "wishlist")
     public Mono<ResponseEntity<ResponseAcceptedDto>> addProduct(@Valid @PathVariable("id_wishlist") String idWishlist,
                                                                 @Valid @RequestBody ProductRequest productRequest) {
 
         log.info("[luizalabs-wishlist-products] | Add product for an existing wish list by wishlist id and product request");
 
-        return null;
+        return generateWishlistService.addProduct(idWishlist, wishlistMapper.toWishlistRequestFrom(productRequest))
+                .map(wishlist -> buildResponseAcceptedDtoFrom(wishlist))
+                .map(response -> ResponseEntity.status(HttpStatus.ACCEPTED)
+                        .body(response))
+                .doOnSuccess(response -> log.info("[luizalabs-wishlist-products] | Product successfully add from wishlist: {}", response));
     }
 
     @DeleteMapping("/{id_wishlist}/products/remove/{id_product}")
@@ -93,13 +97,20 @@ public class WishlistController {
                 .doOnSuccess(response -> log.info("[luizalabs-wishlist-products] | Product successfully removed from wishlist: {}", response));
     }
 
+    private ResponseAcceptedDto buildResponseAcceptedDto(boolean accepted) {
+        return ResponseAcceptedDto.builder().build().loadContentProcessed(accepted);
+    }
+
+    private ResponseAcceptedDto buildResponseAcceptedDtoFrom(Wishlist wishlist) {
+        return buildResponseAcceptedDto(true);
+    }
+
     private ResponseAcceptedDto buildResponseAcceptedDto(Wishlist wishlist, String idProduct) {
 
-        final boolean accepted = wishlist.getItemWishlist()
-                .stream()
+        final boolean accepted = wishlist.getItemWishlist().stream()
                 .anyMatch(i -> !StringUtils.equalsIgnoreCase(i.getProductId(), idProduct));
 
-        return ResponseAcceptedDto.builder().build().loadContentProcessed(accepted);
+        return buildResponseAcceptedDto(accepted);
     }
 
     private void showLogFrom(String message, ResponseEntity<WishlistDto> response) {

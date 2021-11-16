@@ -1,5 +1,6 @@
 package br.com.luizalabs.wishlist.products.service;
 
+import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
 import br.com.luizalabs.wishlist.products.exceptions.WishlistUnprocessableEntityException;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.properties.TransactionProperties;
@@ -53,6 +54,23 @@ public class ValidateWishlist implements IValidateWishlist {
         }
 
         if (StringUtils.isEmpty(idProduct)) {
+            throwsValidationErrorAndLogError(strMsgDefault + "The wish list product id to be removed, is invalid and / or not informed (null).");
+        }
+    }
+
+    @Override
+    public void validateParametersAddProduct(String idWishlist, ItemWishlistRequest itemWishlistRequest) {
+        String strMsgDefault = " Trying to remove product in wish list. ";
+
+        if (Objects.isNull(idWishlist)) {
+            throwsValidationErrorAndLogError(strMsgDefault + "Wishlist is invalid and/or nonexistent (null).");
+        }
+
+        if (Objects.isNull(itemWishlistRequest)) {
+            throwsValidationErrorAndLogError(strMsgDefault + "Parameter to add a new product to the wish list, is invalid and / or not informed (null).");
+        }
+
+        if (Objects.nonNull(itemWishlistRequest) && StringUtils.isEmpty(itemWishlistRequest.getProductId())) {
             throwsValidationErrorAndLogError(strMsgDefault + "The wish list product id to be removed, is invalid and / or not informed (null).");
         }
     }

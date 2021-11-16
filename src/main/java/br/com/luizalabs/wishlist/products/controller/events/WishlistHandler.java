@@ -63,4 +63,17 @@ public class WishlistHandler {
                                 .body(response))
                         .doOnSuccess(response -> log.info("Wish list created successfully")), WishlistDto.class);
     }
+
+//    public Mono<ServerResponse> deleteProduct(ServerRequest request) {
+//        final Mono<Wishlist> wishlist = request.bodyToMono(Wishlist.class);
+//        final Mono<Wishlist> wishlistSave = wishlist.flatMap(generateWishlistService::create)
+//                .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistUnprocessableEntityException(wishlist.toString()))));
+//
+//        return ServerResponse.ok()
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(wishlistSave.map(wishlistMapper::toWishlistDtoFrom)
+//                        .map(response -> ResponseEntity.status(HttpStatus.CREATED)
+//                                .body(response))
+//                        .doOnSuccess(response -> log.info("Wish list created successfully")), WishlistDto.class);
+//    }
 }

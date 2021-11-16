@@ -20,7 +20,6 @@ public class SwaggerConfig {
 
     private static final String VERSION_API = "/v1";
     private static final String PATH_URI_WISHLIST = "/wishlist";
-    private static final String PATH_URI_PRODUCTS = "/products";
     private static final String PATH_URI_EVENTS_STREAM = "/events-stream";
 
     @Bean
@@ -48,12 +47,6 @@ public class SwaggerConfig {
     public GroupedOpenApi wishlistOpenApi() {
         String[] paths = {VERSION_API + PATH_URI_WISHLIST + "/**"};
         return GroupedOpenApi.builder().group("wishlist").pathsToMatch(paths).build();
-    }
-
-    @Bean
-    public GroupedOpenApi productsOpenApi() {
-        String[] paths = {VERSION_API + PATH_URI_PRODUCTS + "/**"};
-        return GroupedOpenApi.builder().group("products").pathsToMatch(paths).build();
     }
 
     @Bean
