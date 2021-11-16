@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdviceControllerConfig {
 
-    private final HttpServletRequest request;
+//    private final HttpServletRequest request;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Throwable throwable) {
@@ -150,18 +150,19 @@ public class AdviceControllerConfig {
     }
 
     private String getPathUri() {
-        return getFullRouteRequest();
+        return "";
+//        return getFullRouteRequest();
     }
 
-    public String getVerbMethodRequest() {
-        return this.request.getMethod();
-    }
-
-    public String pathRequestURI() {
-        return this.request.getRequestURI().substring(this.request.getContextPath().length());
-    }
-
-    public String getFullRouteRequest() {
-        return "{".concat(getVerbMethodRequest().concat("}: ").concat(pathRequestURI()));
-    }
+//    public String getVerbMethodRequest() {
+//        return this.request.getMethod();
+//    }
+//
+//    public String pathRequestURI() {
+//        return this.request.getRequestURI().substring(this.request.getContextPath().length());
+//    }
+//
+//    public String getFullRouteRequest() {
+//        return "{".concat(getVerbMethodRequest().concat("}: ").concat(pathRequestURI()));
+//    }
 }

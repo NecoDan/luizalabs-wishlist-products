@@ -15,7 +15,6 @@ import java.util.Objects;
  * @author Daniel Santos
  * @since 15/11/2021
  */
-
 @Slf4j
 @Service
 @RequiredArgsConstructor

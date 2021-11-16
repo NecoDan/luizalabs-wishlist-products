@@ -47,10 +47,10 @@ public class WishlistCreator {
     public static Wishlist createdValidWishListNoItems(String title) {
 
         return Wishlist.builder()
-                .id(UUID.randomUUID().toString())
                 .clientId(UUID.randomUUID().toString())
                 .title(title)
                 .build()
+                .generateIdThis()
                 .generateDtCreatedThis();
     }
 
@@ -69,10 +69,10 @@ public class WishlistCreator {
     public static ItemWishlist createdItemWishlist(UUID idProduct, String nameProduct) {
 
         return ItemWishlist.builder()
-                .id(UUID.randomUUID().toString())
                 .productId(idProduct.toString())
                 .productName(nameProduct)
                 .build()
+                .generateIdThis()
                 .generateDtCreatedThis();
     }
 

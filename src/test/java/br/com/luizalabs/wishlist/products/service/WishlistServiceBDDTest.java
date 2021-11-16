@@ -35,6 +35,7 @@ public class WishlistServiceBDDTest {
 
     @Mock
     private WishlistRepository wishlistRepository;
+
     @InjectMocks
     private WishlistService wishlistService;
 
@@ -78,24 +79,24 @@ public class WishlistServiceBDDTest {
             });
 
             Schedulers.parallel().schedule(task);
-            task.get(10, TimeUnit.SECONDS);
+            task.get(30, TimeUnit.SECONDS);
             Assertions.fail("should fail");
         } catch (Exception e) {
             Assertions.assertTrue(e.getCause() instanceof BlockingOperationError);
         }
     }
 
-//    @Test
-//    @DisplayName("save creates an wishlist when successful")
-//    void saveCreatesWishlistWhenSuccessful() {
-//
-//        Wishlist wishlistSaved = WishlistCreator.createdValidWishListToBeSaved(LIST_NAME);
-//
-//        StepVerifier.create(wishlistService.save(wishlistSaved))
-//                .expectSubscription()
-//                .expectNext(wishlist)
-//                .verifyComplete();
-//    }
+    //@Test
+    //@DisplayName("save creates an wishlist when successfuly")
+    void saveCreatesWishlistWhenSuccessful() {
+
+        Wishlist wishlistSaved = WishlistCreator.createdValidWishListToBeSaved(LIST_NAME);
+
+        StepVerifier.create(wishlistService.save(wishlistSaved))
+                .expectSubscription()
+                .expectNext(wishlist)
+                .verifyComplete();
+    }
 
     @Test
     @DisplayName("update save updated wishlist returns empty mono when successful")

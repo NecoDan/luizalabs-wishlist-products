@@ -47,6 +47,11 @@ public class Wishlist implements IGenerateCreatedDate {
         this.id = IGenerateIdentifier.generateStringId();
     }
 
+    public Wishlist generateIdThis() {
+        generateId();
+        return this;
+    }
+
     public void generateDtCreated() {
         this.dtCreated = IGenerateCreatedDate.generateCreatedDt();
     }

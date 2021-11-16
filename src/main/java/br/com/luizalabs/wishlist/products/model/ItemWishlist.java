@@ -38,6 +38,11 @@ public class ItemWishlist implements IGenerateIdentifier, IGenerateCreatedDate {
         this.id = IGenerateIdentifier.generateStringId();
     }
 
+    public ItemWishlist generateIdThis() {
+        generateId();
+        return this;
+    }
+
     public ItemWishlist generateDtCreatedThis() {
         generateDtCreated();
         return this;

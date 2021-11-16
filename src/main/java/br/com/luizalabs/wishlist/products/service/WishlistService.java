@@ -21,7 +21,6 @@ import reactor.core.publisher.Mono;
 public class WishlistService implements IWishlistService {
 
     private final WishlistRepository wishlistRepository;
-    private final ItemWishlistRepository itemWishlistRepository;
 
     @Override
     public Flux<Wishlist> findAll() {
