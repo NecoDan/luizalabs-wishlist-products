@@ -48,7 +48,7 @@ public class GenerateWishlistService implements IGenerateWishlistService {
     @Override
     public Mono<Wishlist> perfomProductAdd(Wishlist wishlist, ItemWishlistRequest itemWishlistRequest) {
 
-        ItemWishlist itemWishlist = wishlistMapper.toItemWishlistFrom(itemWishlistRequest);
+        var itemWishlist = wishlistMapper.toItemWishlistFrom(itemWishlistRequest);
         itemWishlist.generateId();
         itemWishlist.generateDtCreatedThis();
 
@@ -92,7 +92,7 @@ public class GenerateWishlistService implements IGenerateWishlistService {
     }
 
     private void performValidateWishList(Wishlist wishlist) {
-        String strMsgDefault = " Trying to remove product in wish list. ";
+        var strMsgDefault = " Trying to remove product in wish list. ";
 
         if (Objects.isNull(wishlist)) {
             validateWishlist.throwsValidationErrorAndLogError(strMsgDefault + "Wishlist is invalid and/or " +

@@ -31,7 +31,7 @@ public class WishlistCreator {
 
     public static ModelMapper createModelMapperForTests() {
 
-        ModelMapper modelMapper = new ModelMapper();
+        var modelMapper = new ModelMapper();
         modelMapper.createTypeMap(Wishlist.class, WishlistDto.class);
         modelMapper.createTypeMap(ItemWishlist.class, ItemWishlistDto.class);
         modelMapper.createTypeMap(ItemWishlistRequest.class, ItemWishlist.class);
@@ -56,7 +56,7 @@ public class WishlistCreator {
 
     public static Wishlist createdValidWishListToBeSaved(String title) {
 
-        List<ItemWishlist> itemWishlists = Arrays.asList(WishlistCreator.createdItemWishlist(UUID.randomUUID(),
+        var itemWishlists = Arrays.asList(WishlistCreator.createdItemWishlist(UUID.randomUUID(),
                 "Tenis Adidas Serie XXXX"),
                 WishlistCreator.createdItemWishlist(UUID.randomUUID(),
                         "Tenis Nike Serie XIX"),
@@ -82,13 +82,13 @@ public class WishlistCreator {
 
     private static ObjectMapper inicializeObjectMapper() {
 
-        JavaTimeModule module = new JavaTimeModule();
+        var module = new JavaTimeModule();
 
-        LocalDateDeserializer localDateDeserializer = new LocalDateDeserializer(
+        var localDateDeserializer = new LocalDateDeserializer(
                 DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         module.addDeserializer(LocalDate.class, localDateDeserializer);
 
-        LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(
+        var localDateTimeDeserializer = new LocalDateTimeDeserializer(
                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
         module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
 

@@ -99,8 +99,8 @@ public class WishlistControllerWithExtendWithTest {
     @DisplayName("find wishlist by id")
     void findByIdWishlistReturnMonoPautaWhenSuccessful() {
 
-        String id = wishlist.getId();
-        WishlistDto wishlistResponse = WishlistCreator.createModelMapperForTests()
+        var id = wishlist.getId();
+        var wishlistResponse = WishlistCreator.createModelMapperForTests()
                 .map(wishlist, WishlistDto.class);
 
         Mockito.when(wishlistService.findById(id)).thenReturn(Mono.just(wishlist));
@@ -127,7 +127,7 @@ public class WishlistControllerWithExtendWithTest {
     @Test
     @DisplayName("listAll returns a flux of wish list 00")
     void listAllFlavor2ReturnFluxOfWishlistWhenSuccessful() {
-        WishlistDto wishlistResponse = WishlistCreator.createModelMapperForTests()
+        var wishlistResponse = WishlistCreator.createModelMapperForTests()
                 .map(wishlist, WishlistDto.class);
 
         Mockito.when(wishlistService.findAll())
@@ -149,7 +149,7 @@ public class WishlistControllerWithExtendWithTest {
     @Test
     @DisplayName("listAll returns a flux of wish list 01")
     void listAllReturnFluxOfWishlistWhenSuccessful() {
-        WishlistDto wishlistResponse = WishlistCreator.createModelMapperForTests()
+        var wishlistResponse = WishlistCreator.createModelMapperForTests()
                 .map(wishlist, WishlistDto.class);
 
         Mockito.when(wishlistService.findAll())

@@ -3,7 +3,6 @@ package br.com.luizalabs.wishlist.products.controller.api;
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ProductRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
-import br.com.luizalabs.wishlist.products.dto.wishlist.response.ProductItemWishlistDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.ResponseAcceptedDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
 import br.com.luizalabs.wishlist.products.model.Wishlist;

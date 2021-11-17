@@ -117,22 +117,22 @@ public class WishlistControllerWebClientTest {
     // @DisplayName("save creates an wish list when successful")
     void saveCreatesWishlistWhenSuccessful() {
 
-        Wishlist wishlistSaved = this.wishlist;
+        var wishlistSaved = this.wishlist;
 
-        WishlistRequest wishlistRequest = WishlistRequest.builder()
+        var wishlistRequest = WishlistRequest.builder()
                 .title(wishlistSaved.getTitle())
                 .clientId(wishlistSaved.getClientId())
                 .itemWishlist(getListItemWishlistRequest(wishlistSaved.getItemWishlist()))
                 .build();
 
-        WishlistDto wishlistResponse = WishlistCreator.createModelMapperForTests()
+        var wishlistResponse = WishlistCreator.createModelMapperForTests()
                 .map(wishlistSaved, WishlistDto.class);
 
         Mockito.when(wishlistMapper.toWishlistFromRequest(any(WishlistRequest.class))).thenReturn(wishlistSaved);
         Mockito.when(wishlistMapper.toWishlistDtoFrom(any(Wishlist.class))).thenReturn(wishlistResponse);
         Mockito.when(wishlistRepository.save(any())).thenReturn(Mono.just(wishlistSaved));
 
-        WishlistDto response = webTestClient.post()
+        var response = webTestClient.post()
                 .uri(URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(wishlistRequest))

@@ -37,10 +37,10 @@ public class StreamEventsController {
         log.info("[luizalabs-wishlist-products] [events]");
         log.info("[luizalabs-wishlist-products] [events] | Running event stream wishlist(s)");
 
-        Flux<Long> interval = Flux.interval(Duration.ofSeconds(DURATION_SECONDS));
+        var interval = Flux.interval(Duration.ofSeconds(DURATION_SECONDS));
         log.info("[luizalabs-wishlist-products] [events] | Intervalo de tempo: {}", interval);
 
-        Flux<WishlistDto> events = wishlistReportService.getAll()
+        var events = wishlistReportService.getAll()
                 .map(wishlistMapper::toWishlistDtoFrom);
         log.info("[luizalabs-wishlist-products] [events] | Response: {}", events);
 

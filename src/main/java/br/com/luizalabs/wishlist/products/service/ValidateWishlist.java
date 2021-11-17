@@ -27,7 +27,7 @@ public class ValidateWishlist implements IValidateWishlist {
 
     @Override
     public void validateParameters(Wishlist wishlist) {
-        String strMsgDefault = " Trying to create wish list. ";
+        var strMsgDefault = " Trying to create wish list. ";
         validadeInstanceWishlist(wishlist);
 
         if (Objects.isNull(wishlist.getClientId())) {
@@ -60,7 +60,7 @@ public class ValidateWishlist implements IValidateWishlist {
 
     @Override
     public void validateParametersAddProduct(String idWishlist, ItemWishlistRequest itemWishlistRequest) {
-        String strMsgDefault = " Trying to remove product in wish list. ";
+        var strMsgDefault = " Trying to remove product in wish list. ";
 
         if (Objects.isNull(idWishlist)) {
             throwsValidationErrorAndLogError(strMsgDefault + "Wishlist is invalid and/or nonexistent (null).");
