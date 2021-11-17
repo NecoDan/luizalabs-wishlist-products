@@ -1,10 +1,10 @@
 #
 # Package stage
 #
-#FROM openjdk:8-jdk-alpine
-FROM adoptopenjdk/openjdk11:latest
+FROM openjdk:8-jdk-alpine
+#FROM adoptopenjdk/openjdk11:latest
 VOLUME /tmp
-EXPOSE 8080
+EXPOSE 8095
 RUN mkdir -p /app/
 RUN mkdir -p /app/logs/
 ARG JAR_FILE
