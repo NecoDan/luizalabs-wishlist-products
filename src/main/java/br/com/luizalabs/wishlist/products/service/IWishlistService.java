@@ -12,7 +12,7 @@ public interface IWishlistService {
 
     Mono<Wishlist> findById(String id);
 
-    Flux<Wishlist> findByClientId(String idClient);
+    Flux<Wishlist> findByClientId(String idClient, String idProduct);
 
     Mono<Wishlist> save(Wishlist wishlist);
 

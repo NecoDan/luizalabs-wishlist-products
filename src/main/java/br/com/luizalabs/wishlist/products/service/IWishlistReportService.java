@@ -9,4 +9,5 @@ public interface IWishlistReportService {
     Flux<Wishlist> getAll();
 
     Mono<Wishlist> getOneBy(String id);
+
 }

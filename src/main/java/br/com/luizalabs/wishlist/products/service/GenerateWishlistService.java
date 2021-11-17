@@ -45,6 +45,7 @@ public class GenerateWishlistService implements IGenerateWishlistService {
         return wishlistService.getOneBy(idWishlist).flatMap(wishlist -> perfomProductAdd(wishlist, itemWishlistRequest));
     }
 
+    @Override
     public Mono<Wishlist> perfomProductAdd(Wishlist wishlist, ItemWishlistRequest itemWishlistRequest) {
 
         ItemWishlist itemWishlist = wishlistMapper.toItemWishlistFrom(itemWishlistRequest);

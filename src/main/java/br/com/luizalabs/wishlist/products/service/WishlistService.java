@@ -38,8 +38,8 @@ public class WishlistService implements IWishlistService {
     }
 
     @Override
-    public Flux<Wishlist> findByClientId(String idClient) {
-        return null;
+    public Flux<Wishlist> findByClientId(String idClient, String idProduct) {
+        return this.wishlistRepository.getWishListClientIdProductId(idClient, idProduct);
     }
 
     @Override

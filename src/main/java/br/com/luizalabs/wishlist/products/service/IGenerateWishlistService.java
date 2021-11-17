@@ -11,6 +11,8 @@ public interface IGenerateWishlistService {
 
     Mono<Wishlist> addProduct(final String idWishlist, final ItemWishlistRequest itemWishlistRequest);
 
+    Mono<Wishlist> perfomProductAdd(final Wishlist wishlist, final ItemWishlistRequest itemWishlistRequest);
+
     Mono<Wishlist> removeProduct(final String idWishlist, final String idProduct);
 
     Mono<Wishlist> perfomProductRemoval(final Wishlist wishlist, final String idProduct);

@@ -3,6 +3,7 @@ package br.com.luizalabs.wishlist.products.controller.api;
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ProductRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
+import br.com.luizalabs.wishlist.products.dto.wishlist.response.ProductItemWishlistDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.ResponseAcceptedDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
@@ -77,7 +78,7 @@ public class WishlistController {
         log.info("[luizalabs-wishlist-products] | Add product for an existing wish list by wishlist id and product request");
 
         return generateWishlistService.addProduct(idWishlist, wishlistMapper.toWishlistRequestFrom(productRequest))
-                .map(wishlist -> buildResponseAcceptedDtoFrom(wishlist))
+                .map(this::buildResponseAcceptedDtoFrom)
                 .map(response -> ResponseEntity.status(HttpStatus.ACCEPTED)
                         .body(response))
                 .doOnSuccess(response -> log.info("[luizalabs-wishlist-products] | Product successfully add from wishlist: {}", response));
@@ -88,7 +89,8 @@ public class WishlistController {
     public Mono<ResponseEntity<ResponseAcceptedDto>> deleteProduct(@Valid @PathVariable("id_wishlist") String idWishlist,
                                                                    @Valid @PathVariable("id_product") String idProduct) {
 
-        log.info("[luizalabs-wishlist-products] | Remove product for an existing wish list by wishlist id and product id");
+        log.info("[luizalabs-wishlist-products] | Remove product for an existing wish list by wishlist_id: {{}} " +
+                " and product_id: {{}}", idWishlist, idProduct);
 
         return generateWishlistService.removeProduct(idWishlist, idProduct)
                 .map(wishlist -> buildResponseAcceptedDto(wishlist, idProduct))

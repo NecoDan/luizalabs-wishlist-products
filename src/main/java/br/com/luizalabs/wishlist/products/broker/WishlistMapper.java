@@ -5,6 +5,7 @@ import br.com.luizalabs.wishlist.products.config.ModelMapperConfig;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ProductRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
+import br.com.luizalabs.wishlist.products.dto.wishlist.response.ProductItemWishlistDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
 import br.com.luizalabs.wishlist.products.model.ItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
@@ -40,4 +41,9 @@ public class WishlistMapper {
     public ItemWishlist toItemWishlistFrom(ItemWishlistRequest entity) {
         return this.modelMapperConfig.modelMapper().map(entity, ItemWishlist.class);
     }
+
+    public ProductItemWishlistDto toProductItemWishlistDtoFrom(ItemWishlist entity) {
+        return this.modelMapperConfig.modelMapper().map(entity, ProductItemWishlistDto.class);
+    }
+
 }
