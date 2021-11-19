@@ -15,6 +15,7 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 public class WishlistRouter {
 
     private static final String URI = "/v1/events/wishlist";
+    private static final String URI_DELETE_PRODUCT = "/{id_wishlist}/products/remove/{id_product}";
 
     @Bean
     public RouterFunction<ServerResponse> routeVoters(WishlistHandler handler) {
@@ -23,8 +24,8 @@ public class WishlistRouter {
                         .and(accept(MediaType.APPLICATION_JSON)), handler::findAll)
                 .andRoute(GET(URI + "/{id}")
                         .and(accept(MediaType.APPLICATION_JSON)), handler::findById)
-//                .andRoute(DELETE(URI + "/{id_wishlist}/products/remove/{id_product}")
-//                        .and(accept(MediaType.APPLICATION_JSON)), handler::deleteProduct)
+                .andRoute(DELETE(URI + URI_DELETE_PRODUCT)
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::deleteProduct)
                 .andRoute(POST(URI)
                         .and(accept(MediaType.APPLICATION_JSON)), handler::save);
     }

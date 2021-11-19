@@ -1,9 +1,8 @@
-package br.com.luizalabs.wishlist.products.controller.api;
+package br.com.luizalabs.wishlist.products.controller.events;
 
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
 import br.com.luizalabs.wishlist.products.service.IWishlistReportService;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -32,7 +31,7 @@ public class StreamEventsController {
     private static final Integer DURATION_SECONDS = 5;
 
     @GetMapping(value = "/wishlist/produces", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @Operation(summary = "Searching all existing wishlist(s)", tags = "events-stream")
+//    @Operation(summary = "Searching all existing wishlist(s)", tags = "events-stream")
     public Flux<Tuple2<Long, WishlistDto>> getWishlistByEvents() {
         log.info("[luizalabs-wishlist-products] [events]");
         log.info("[luizalabs-wishlist-products] [events] | Running event stream wishlist(s)");
