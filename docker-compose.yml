@@ -20,9 +20,9 @@ services:
     restart: always
     container_name: wishlist-products
     expose:
-      - "8080"
+      - "8095"
     ports:
-      - "8080:8080"
+      - "8095:8095"
     depends_on:
       - mongo
     links:
