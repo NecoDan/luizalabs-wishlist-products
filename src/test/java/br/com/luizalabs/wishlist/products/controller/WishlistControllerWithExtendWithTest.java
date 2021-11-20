@@ -2,7 +2,7 @@ package br.com.luizalabs.wishlist.products.controller;
 
 import br.com.luizalabs.wishlist.products.WishlistCreator;
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
-import br.com.luizalabs.wishlist.products.config.ModelMapperConfig;
+import br.com.luizalabs.wishlist.products.configuration.ModelMapperConfig;
 import br.com.luizalabs.wishlist.products.controller.api.WishlistController;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
 import br.com.luizalabs.wishlist.products.model.Wishlist;

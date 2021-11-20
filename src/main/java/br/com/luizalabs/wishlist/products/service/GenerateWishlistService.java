@@ -35,6 +35,11 @@ public class GenerateWishlistService implements IGenerateWishlistService {
         wishlist.popularItemsWishList();
         wishlist.loadTotalProductsItems();
 
+        return perfomSaveWishlist(wishlist);
+    }
+
+    @Override
+    public Mono<Wishlist> perfomSaveWishlist(Wishlist wishlist) {
         return saveWishList(wishlist);
     }
 
@@ -42,16 +47,19 @@ public class GenerateWishlistService implements IGenerateWishlistService {
     public Mono<Wishlist> addProduct(String idWishlist, ItemWishlistRequest itemWishlistRequest) {
 
         validateWishlist.validateParametersAddProduct(idWishlist, itemWishlistRequest);
-        return wishlistService.getOneBy(idWishlist).flatMap(wishlist -> perfomProductAdd(wishlist, itemWishlistRequest));
+        return wishlistService.findById(idWishlist)
+                .flatMap(wishlist -> perfomProductAdd(wishlist, itemWishlistRequest));
     }
 
-    @Override
-    public Mono<Wishlist> perfomProductAdd(Wishlist wishlist, ItemWishlistRequest itemWishlistRequest) {
+    private boolean checkProductAaddedWishlist(String idProduct, Wishlist wishlist) {
+        return wishlist.getItemWishlist().stream()
+                .anyMatch(i -> StringUtils.equalsIgnoreCase(idProduct, i.getProductId()));
+    }
+
+    public Mono<Wishlist> finalizePerfomProductAdd(Wishlist wishlist, ItemWishlistRequest itemWishlistRequest) {
 
         var itemWishlist = wishlistMapper.toItemWishlistFrom(itemWishlistRequest);
-        itemWishlist.generateId();
-        itemWishlist.generateDtCreatedThis();
-
+        itemWishlist.fillItem(wishlist.getId());
         wishlist.addItemWishlist(itemWishlist);
         wishlist.loadTotalProductsItems();
 
@@ -59,10 +67,18 @@ public class GenerateWishlistService implements IGenerateWishlistService {
     }
 
     @Override
+    public Mono<Wishlist> perfomProductAdd(Wishlist wishlist, ItemWishlistRequest itemWishlistRequest) {
+        return (checkProductAaddedWishlist(itemWishlistRequest.getProductId(), wishlist))
+                ? Mono.just(wishlist)
+                : finalizePerfomProductAdd(wishlist, itemWishlistRequest);
+    }
+
+    @Override
     public Mono<Wishlist> removeProduct(String idWishlist, String idProduct) {
 
         validateWishlist.validateParametersRemoveProduct(idWishlist, idProduct);
-        return wishlistService.getOneBy(idWishlist).flatMap(wishlist -> perfomProductRemoval(wishlist, idProduct));
+        return wishlistService.findById(idWishlist)
+                .flatMap(wishlist -> perfomProductRemoval(wishlist, idProduct));
     }
 
     @Override
@@ -75,12 +91,11 @@ public class GenerateWishlistService implements IGenerateWishlistService {
                 .filter(i -> StringUtils.equalsIgnoreCase(i.getProductId(), idProduct))
                 .findFirst();
 
-        if (!optional.isPresent()) {
-            validateWishlist.throwsValidationErrorAndLogError(String.format("Erro removing product in wish list. " +
-                    "Product not found widh id: %s", idProduct));
-        }
+        ItemWishlist itemWishlist = optional.orElseThrow(() -> validateWishlist
+                .getWishlistUnprocessableEntityException(String.format("Erro removing product in wish list. " +
+                        "Product not found widh id: %s", idProduct)));
 
-        return performRemoveProduct(wishlist, optional.get());
+        return performRemoveProduct(wishlist, itemWishlist);
     }
 
     @Override
@@ -103,5 +118,4 @@ public class GenerateWishlistService implements IGenerateWishlistService {
     private Mono<Wishlist> saveWishList(Wishlist wishlist) {
         return this.wishlistService.save(wishlist);
     }
-
 }

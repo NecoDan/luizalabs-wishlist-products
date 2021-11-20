@@ -8,15 +8,15 @@ public interface IWishlistService {
 
     Flux<Wishlist> findAll();
 
-    Mono<Wishlist> getOneBy(String id);
+    Mono<Wishlist> findById(final String id);
 
-    Mono<Wishlist> findById(String id);
+    Mono<Wishlist> getOneSavedById(final String id);
 
-    Flux<Wishlist> findByClientId(String idClient, String idProduct);
+    Mono<Wishlist> save(final Wishlist wishlist);
 
-    Mono<Wishlist> save(Wishlist wishlist);
+    Mono<Void> update(final Wishlist wishlist);
 
-    Mono<Void> update(Wishlist wishlist);
+    Mono<Void> delete(final String id);
 
-    Mono<Void> delete(String id);
+    Flux<Wishlist> findAllByClientId(final String idClient);
 }

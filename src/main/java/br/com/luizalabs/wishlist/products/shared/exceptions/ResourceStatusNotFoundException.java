@@ -1,4 +1,4 @@
-package br.com.luizalabs.wishlist.products.exceptions;
+package br.com.luizalabs.wishlist.products.shared.exceptions;
 
 import org.springframework.http.HttpStatus;
 

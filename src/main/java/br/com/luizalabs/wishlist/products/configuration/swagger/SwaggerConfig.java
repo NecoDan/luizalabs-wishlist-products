@@ -1,4 +1,4 @@
-package br.com.luizalabs.wishlist.products.config.swagger;
+package br.com.luizalabs.wishlist.products.configuration.swagger;
 
 
 //import io.swagger.v3.oas.models.Components;

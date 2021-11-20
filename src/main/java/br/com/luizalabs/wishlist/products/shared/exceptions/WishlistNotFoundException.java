@@ -1,4 +1,4 @@
-package br.com.luizalabs.wishlist.products.exceptions;
+package br.com.luizalabs.wishlist.products.shared.exceptions;
 
 import org.springframework.http.HttpStatus;
 
@@ -8,8 +8,12 @@ import org.springframework.http.HttpStatus;
  */
 public class WishlistNotFoundException extends HttpException {
 
+    public WishlistNotFoundException(String message, String id) {
+        super(String.format("Wish list %s '%s', not found.", message, id));
+    }
+
     public WishlistNotFoundException(String message) {
-        super(String.format("Wish list '%s' not found.", message));
+        super(message);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package br.com.luizalabs.wishlist.products.service;
 
 import br.com.luizalabs.wishlist.products.WishlistCreator;
-import br.com.luizalabs.wishlist.products.exceptions.WishlistNotFoundException;
+import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistNotFoundException;
 import br.com.luizalabs.wishlist.products.model.ItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.repository.WishlistRepository;

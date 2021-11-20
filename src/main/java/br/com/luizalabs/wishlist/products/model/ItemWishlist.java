@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -18,11 +19,15 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "items")
+@Document(collection = "item_wishlist")
 public class ItemWishlist implements IGenerateIdentifier, IGenerateCreatedDate {
 
     @Id
+    @NonFinal
     private String id;
+
+    @Field(name = "wishlist_id")
+    private String wishlistId;
 
     @Field(name = "product_id")
     private String productId;
@@ -42,6 +47,15 @@ public class ItemWishlist implements IGenerateIdentifier, IGenerateCreatedDate {
         return this;
     }
 
+    public void fillWishlistId(String idWishlist) {
+        this.wishlistId = idWishlist;
+    }
+
+    public ItemWishlist fillWishlistIdThis(String idWishlist) {
+        fillWishlistId(idWishlist);
+        return this;
+    }
+
     public ItemWishlist generateDtCreatedThis() {
         generateDtCreated();
         return this;
@@ -50,4 +64,11 @@ public class ItemWishlist implements IGenerateIdentifier, IGenerateCreatedDate {
     public void generateDtCreated() {
         this.dtCreated = IGenerateCreatedDate.generateCreatedDt();
     }
+
+    public void fillItem(String idWishlist) {
+        generateId();
+        fillWishlistId(idWishlist);
+        generateDtCreatedThis();
+    }
+
 }

@@ -9,6 +9,8 @@ public interface IGenerateWishlistService {
 
     Mono<Wishlist> create(final Wishlist wishlist);
 
+    Mono<Wishlist> perfomSaveWishlist(Wishlist wishlist);
+
     Mono<Wishlist> addProduct(final String idWishlist, final ItemWishlistRequest itemWishlistRequest);
 
     Mono<Wishlist> perfomProductAdd(final Wishlist wishlist, final ItemWishlistRequest itemWishlistRequest);

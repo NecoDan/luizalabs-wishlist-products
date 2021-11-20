@@ -3,7 +3,7 @@ package br.com.luizalabs.wishlist.products.controller.events;
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.ResponseAcceptedDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
-import br.com.luizalabs.wishlist.products.exceptions.WishlistUnprocessableEntityException;
+import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistUnprocessableEntityException;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.service.IGenerateWishlistService;
 import br.com.luizalabs.wishlist.products.service.IWishlistReportService;

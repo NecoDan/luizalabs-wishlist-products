@@ -1,5 +1,6 @@
 package br.com.luizalabs.wishlist.products.service;
 
+import br.com.luizalabs.wishlist.products.model.ProductItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -10,4 +11,5 @@ public interface IWishlistReportService {
 
     Mono<Wishlist> getOneBy(String id);
 
+    Mono<ProductItemWishlist> getProductByClientInWishlist(String idClient, String idProduct);
 }

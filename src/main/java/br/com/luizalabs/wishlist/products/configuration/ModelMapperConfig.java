@@ -1,4 +1,4 @@
-package br.com.luizalabs.wishlist.products.config;
+package br.com.luizalabs.wishlist.products.configuration;
 
 
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;

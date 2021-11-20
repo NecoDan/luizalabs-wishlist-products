@@ -1,10 +1,10 @@
-package br.com.luizalabs.wishlist.products.config;
+package br.com.luizalabs.wishlist.products.configuration;
 
 
 import br.com.luizalabs.wishlist.products.dto.api.ErrorResponseDto;
 import br.com.luizalabs.wishlist.products.dto.api.Response;
-import br.com.luizalabs.wishlist.products.exceptions.HttpException;
-import br.com.luizalabs.wishlist.products.util.FormatterUtil;
+import br.com.luizalabs.wishlist.products.shared.exceptions.HttpException;
+import br.com.luizalabs.wishlist.products.shared.FormatterUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

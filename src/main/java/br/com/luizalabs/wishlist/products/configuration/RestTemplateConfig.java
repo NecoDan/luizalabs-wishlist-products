@@ -1,4 +1,4 @@
-package br.com.luizalabs.wishlist.products.config;
+package br.com.luizalabs.wishlist.products.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -3,7 +3,6 @@ package br.com.luizalabs.wishlist.products.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +11,7 @@ import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class Wishlist implements IGenerateCreatedDate {
     @Field(name = "total_products")
     private int totalProducts;
 
-    @Field(name = "item_products")
+    @Field(name = "itens_products")
     private List<ItemWishlist> itemWishlist;
 
     public void generateId() {
@@ -96,8 +96,7 @@ public class Wishlist implements IGenerateCreatedDate {
     public void popularItemsWishList() {
         if (Objects.isNull(this.itemWishlist))
             return;
-        this.itemWishlist.forEach(ItemWishlist::generateId);
-        this.itemWishlist.forEach(ItemWishlist::generateDtCreatedThis);
+        this.itemWishlist.forEach(i -> i.fillItem(this.id));
     }
 
     private void inicializeItemWishlist() {
@@ -118,14 +117,15 @@ public class Wishlist implements IGenerateCreatedDate {
     @Override
     public String toString() {
         var mapper = new ObjectMapper();
-        var jsonString = "";
+        var result = "";
+
         try {
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            jsonString = mapper.writeValueAsString(this);
+            result = mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        return jsonString;
+        return result;
     }
 }

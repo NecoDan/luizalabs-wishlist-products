@@ -1,7 +1,7 @@
 package br.com.luizalabs.wishlist.products.broker;
 
 
-import br.com.luizalabs.wishlist.products.config.ModelMapperConfig;
+import br.com.luizalabs.wishlist.products.configuration.ModelMapperConfig;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ProductRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;

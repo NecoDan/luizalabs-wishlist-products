@@ -10,10 +10,7 @@ import br.com.luizalabs.wishlist.products.model.ItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.properties.TransactionProperties;
 import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
-import br.com.luizalabs.wishlist.products.service.GenerateWishlistService;
-import br.com.luizalabs.wishlist.products.service.ValidateWishlist;
-import br.com.luizalabs.wishlist.products.service.WishlistReportService;
-import br.com.luizalabs.wishlist.products.service.WishlistService;
+import br.com.luizalabs.wishlist.products.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,10 +81,11 @@ public class WishlistControllerWebClientTest {
         this.wishlistMapper = Mockito.mock(WishlistMapper.class);
         this.wishlistRepository = Mockito.mock(WishlistRepository.class);
         this.wishlistService = new WishlistService(wishlistRepository);
-        this.wishlistReportService = new WishlistReportService(wishlistService, wishlistMapper);
+        this.wishlistReportService = new WishlistReportService(wishlistService, wishlistMapper, wishlistRepository);
 
         this.transactionProperties = Mockito.mock(TransactionProperties.class);
-        this.generateWishlistService = new GenerateWishlistService(wishlistService, validateWishlist, wishlistMapper);
+        this.generateWishlistService = new GenerateWishlistService(wishlistService, validateWishlist,
+                wishlistMapper);
 
         webTestClient = WebTestClient
                 .bindToController(new WishlistController(generateWishlistService, wishlistReportService, wishlistMapper))

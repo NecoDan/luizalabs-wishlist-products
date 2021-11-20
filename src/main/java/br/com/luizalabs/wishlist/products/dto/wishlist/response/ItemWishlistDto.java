@@ -22,6 +22,9 @@ public class ItemWishlistDto {
     @JsonProperty("item_id")
     private String id;
 
+    @JsonProperty("wishlist_id")
+    private String wishlistId;
+
     @JsonProperty("product_id")
     private String productId;
 

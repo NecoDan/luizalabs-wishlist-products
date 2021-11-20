@@ -48,7 +48,7 @@ public class WishlistController {
     }
 
     @GetMapping
-//    @Operation(summary = "Returns a list of all wish list.", tags = "wishlist")
+//    @Operation(summary = "Returns a list of all wish list. Check all the customer's Wishlist products.", tags = "wishlist")
     public Flux<WishlistDto> findAll() {
 
         log.info("[luizalabs-wishlist-products] | Searching all existing wish list");
@@ -68,8 +68,8 @@ public class WishlistController {
                 .doOnSuccess(p -> showLogFrom(String.format("Returning a specific wish list by {id} = %s", id), p));
     }
 
-    @PutMapping("/{id_wishlist}/products/add")
-//    @Operation(summary = "Call to add new product for an existing wish list.", tags = "wishlist")
+    @PutMapping("/add_product/{id_wishlist}")
+    // @Operation(summary = "Call to add new product for an existing wish list. Add a product to the customer's Wishlist", tags = "wishlist")
     public Mono<ResponseEntity<ResponseAcceptedDto>> addProduct(@Valid @PathVariable("id_wishlist") String idWishlist,
                                                                 @Valid @RequestBody ProductRequest productRequest) {
 
@@ -82,8 +82,8 @@ public class WishlistController {
                 .doOnSuccess(response -> log.info("[luizalabs-wishlist-products] | Product successfully add from wishlist: {}", response));
     }
 
-    @DeleteMapping("/{id_wishlist}/products/remove/{id_product}")
-//    @Operation(summary = "Call to remove product for an existing wish list.", tags = "wishlist")
+    @DeleteMapping("/{id_wishlist}/remove_product/{id_product}")
+    // @Operation(summary = "Call to remove product for an existing wish list. Remove a product from the customer's Wishlist", tags = "wishlist")
     public Mono<ResponseEntity<ResponseAcceptedDto>> deleteProduct(@Valid @PathVariable("id_wishlist") String idWishlist,
                                                                    @Valid @PathVariable("id_product") String idProduct) {
 

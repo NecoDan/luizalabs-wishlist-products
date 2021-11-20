@@ -1,8 +1,9 @@
 package br.com.luizalabs.wishlist.products.service;
 
-import br.com.luizalabs.wishlist.products.exceptions.WishlistNotFoundException;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
+import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistNotFoundException;
+import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistUnprocessableEntityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,23 +24,21 @@ public class WishlistService implements IWishlistService {
 
     @Override
     public Flux<Wishlist> findAll() {
-        return this.wishlistRepository.findAll();
-    }
-
-    @Override
-    public Mono<Wishlist> getOneBy(String id) {
-        return findById(id);
+        return this.wishlistRepository.findAll()
+                .switchIfEmpty(Mono.defer(()
+                        -> Mono.error(new WishlistNotFoundException("collection of data from wishlists not found"))));
     }
 
     @Override
     public Mono<Wishlist> findById(String id) {
         return this.wishlistRepository.findById(id)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistNotFoundException(id))));
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistNotFoundException("", id))));
     }
 
     @Override
-    public Flux<Wishlist> findByClientId(String idClient, String idProduct) {
-        return this.wishlistRepository.getWishListClientIdProductId(idClient, idProduct);
+    public Mono<Wishlist> getOneSavedById(String id) {
+        return this.wishlistRepository.findById(id)
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistUnprocessableEntityException(id))));
     }
 
     @Override
@@ -60,5 +59,10 @@ public class WishlistService implements IWishlistService {
     @Transactional
     public Mono<Void> delete(String id) {
         return findById(id).flatMap(wishlistRepository::delete);
+    }
+
+    @Override
+    public Flux<Wishlist> findAllByClientId(String idClient) {
+        return this.wishlistRepository.findAllByClientId(idClient);
     }
 }

@@ -1,4 +1,4 @@
-package br.com.luizalabs.wishlist.products.util;
+package br.com.luizalabs.wishlist.products.shared;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

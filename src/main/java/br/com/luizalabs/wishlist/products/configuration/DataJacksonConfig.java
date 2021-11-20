@@ -1,4 +1,4 @@
-package br.com.luizalabs.wishlist.products.config;
+package br.com.luizalabs.wishlist.products.configuration;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.DeserializationFeature;
