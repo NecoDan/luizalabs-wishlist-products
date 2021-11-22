@@ -37,7 +37,6 @@ public class WishlistController {
     private final WishlistMapper wishlistMapper;
 
     @PostMapping
-//    @Operation(summary = "Call to create wish list.", tags = "wishlist")
     public Mono<ResponseEntity<WishlistDto>> createWishList(@RequestBody @Valid WishlistRequest wishlistRequest) {
 
         log.info("[luizalabs-wishlist-products] | Call to create wishtlist: {}.", wishlistRequest);
@@ -50,7 +49,6 @@ public class WishlistController {
     }
 
     @GetMapping
-//    @Operation(summary = "Returns a list of all wish list. Check all the customer's Wishlist products.", tags = "wishlist")
     public Flux<WishlistDto> findAll() {
 
         log.info("[luizalabs-wishlist-products] | Searching all existing wish list");
@@ -60,7 +58,6 @@ public class WishlistController {
     }
 
     @GetMapping("/{id}")
-//    @Operation(summary = "Returns a specific wish list by id", tags = "wishlist")
     public Mono<WishlistDto> findById(@PathVariable("id") String id) {
 
         log.info("[luizalabs-wishlist-products] | Searching for an existing Wish list by id");
@@ -71,7 +68,6 @@ public class WishlistController {
     }
 
     @PutMapping("/add_product/{id_wishlist}")
-    // @Operation(summary = "Call to add new product for an existing wish list. Add a product to the customer's Wishlist", tags = "wishlist")
     public Mono<ResponseEntity<ResponseAcceptedDto>> addProductBy(@Valid @PathVariable("id_wishlist") String idWishlist,
                                                                   @Valid @RequestBody ProductRequest request) {
 
@@ -85,7 +81,6 @@ public class WishlistController {
     }
 
     @DeleteMapping("/remove_product/{id_wishlist}")
-    // @Operation(summary = "Call to remove product for an existing wish list. Remove a product from the customer's Wishlist", tags = "wishlist")
     public Mono<ResponseEntity<ResponseAcceptedDto>> deleteProductBy(@Valid @PathVariable("id_wishlist") String idWishlist,
                                                                      @Valid @RequestBody ProductRemoveRequest request) {
 
