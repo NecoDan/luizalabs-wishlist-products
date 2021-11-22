@@ -2,6 +2,7 @@ package br.com.luizalabs.wishlist.products.controller;
 
 import br.com.luizalabs.wishlist.products.WishlistCreator;
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
+import br.com.luizalabs.wishlist.products.configuration.AdviceControllerConfig;
 import br.com.luizalabs.wishlist.products.controller.api.WishlistController;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
@@ -11,10 +12,7 @@ import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.properties.TransactionProperties;
 import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
 import br.com.luizalabs.wishlist.products.service.*;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.blockhound.BlockHound;
 import reactor.blockhound.BlockingOperationError;
-import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
@@ -49,14 +46,14 @@ import static org.mockito.ArgumentMatchers.any;
 @AutoConfigureWebTestClient(timeout = "10000")
 public class WishlistControllerWebClientTest {
 
-    private WishlistRepository wishlistRepository;
+    private WishlistRepository wishlistRepositoryMock;
     private WishlistService wishlistService;
     private WishlistReportService wishlistReportService;
-    private GenerateWishlistService generateWishlistService;
+    private GenerateWishlistService generateWishlistServiceMock;
     private ModelMapper modelMapper;
     private WishlistMapper wishlistMapper;
-    private TransactionProperties transactionProperties;
-    private ValidateWishlist validateWishlist;
+    private TransactionProperties transactionPropertiesMock;
+    private ValidateWishlistService validateWishlistMock;
 
     @Autowired
     private WebTestClient webTestClient;
@@ -76,19 +73,25 @@ public class WishlistControllerWebClientTest {
 
     @BeforeEach
     void initClient() {
+
         this.modelMapper = WishlistCreator.createModelMapperForTests();
 
         this.wishlistMapper = Mockito.mock(WishlistMapper.class);
-        this.wishlistRepository = Mockito.mock(WishlistRepository.class);
-        this.wishlistService = new WishlistService(wishlistRepository);
+        this.wishlistRepositoryMock = Mockito.mock(WishlistRepository.class);
+        this.wishlistService = new WishlistService(wishlistRepositoryMock);
         this.wishlistReportService = new WishlistReportService(wishlistService, wishlistMapper);
 
-        this.transactionProperties = Mockito.mock(TransactionProperties.class);
-        this.generateWishlistService = new GenerateWishlistService(wishlistService, validateWishlist,
+        this.validateWishlistMock = Mockito.mock(ValidateWishlistService.class);
+        this.transactionPropertiesMock = Mockito.mock(TransactionProperties.class);
+        this.generateWishlistServiceMock = new GenerateWishlistService(wishlistService, validateWishlistMock,
                 wishlistMapper);
 
+        WishlistController wishlistController =
+                new WishlistController(generateWishlistServiceMock, wishlistReportService, wishlistMapper);
+
         webTestClient = WebTestClient
-                .bindToController(new WishlistController(generateWishlistService, wishlistReportService, wishlistMapper))
+                .bindToController(wishlistController)
+                .controllerAdvice(AdviceControllerConfig.class)
                 .build();
     }
 
@@ -111,8 +114,8 @@ public class WishlistControllerWebClientTest {
         }
     }
 
-    // @Test
-    // @DisplayName("save creates an wish list when successful")
+    @Test
+    @DisplayName("save creates an wish list when successful")
     void saveCreatesWishlistWhenSuccessful() {
 
         var wishlistSaved = this.wishlist;
@@ -127,8 +130,9 @@ public class WishlistControllerWebClientTest {
                 .map(wishlistSaved, WishlistDto.class);
 
         Mockito.when(wishlistMapper.toWishlistFromRequest(any(WishlistRequest.class))).thenReturn(wishlistSaved);
+        Mockito.when(wishlistRepositoryMock.save(any(Wishlist.class))).thenReturn(wishlistSaved);
+
         Mockito.when(wishlistMapper.toWishlistDtoFrom(any(Wishlist.class))).thenReturn(wishlistResponse);
-        Mockito.when(wishlistRepository.save(any())).thenReturn(Mono.just(wishlistSaved));
 
         var response = webTestClient.post()
                 .uri(URI)

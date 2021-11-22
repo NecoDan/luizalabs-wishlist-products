@@ -23,13 +23,13 @@ import java.util.Optional;
 public class GenerateWishlistService implements IGenerateWishlistService {
 
     private final IWishlistService wishlistService;
-    private final IValidateWishlist validateWishlist;
+    private final IValidateWishlistService validateWishlistService;
     private final WishlistMapper wishlistMapper;
 
     @Override
     public Mono<Wishlist> create(Wishlist wishlist) {
 
-        validateWishlist.validateParameters(wishlist);
+        validateWishlistService.validateParameters(wishlist);
         wishlist.generateId();
         wishlist.generateDtCreated();
         wishlist.popularItemsWishList();
@@ -46,12 +46,13 @@ public class GenerateWishlistService implements IGenerateWishlistService {
     @Override
     public Mono<Wishlist> addProduct(String idWishlist, ItemWishlistRequest itemWishlistRequest) {
 
-        validateWishlist.validateParametersAddProduct(idWishlist, itemWishlistRequest);
+        validateWishlistService.validateParametersAddProduct(idWishlist, itemWishlistRequest);
         return wishlistService.findById(idWishlist)
                 .flatMap(wishlist -> perfomProductAdd(wishlist, itemWishlistRequest));
     }
 
     private boolean checkProductAaddedWishlist(String idProduct, Wishlist wishlist) {
+
         return wishlist.getItemWishlist().stream()
                 .anyMatch(i -> StringUtils.equalsIgnoreCase(idProduct, i.getProductId()));
     }
@@ -68,6 +69,7 @@ public class GenerateWishlistService implements IGenerateWishlistService {
 
     @Override
     public Mono<Wishlist> perfomProductAdd(Wishlist wishlist, ItemWishlistRequest itemWishlistRequest) {
+
         return (checkProductAaddedWishlist(itemWishlistRequest.getProductId(), wishlist))
                 ? Mono.just(wishlist)
                 : finalizePerfomProductAdd(wishlist, itemWishlistRequest);
@@ -76,7 +78,7 @@ public class GenerateWishlistService implements IGenerateWishlistService {
     @Override
     public Mono<Wishlist> removeProduct(String idWishlist, String idProduct) {
 
-        validateWishlist.validateParametersRemoveProduct(idWishlist, idProduct);
+        validateWishlistService.validateParametersRemoveProduct(idWishlist, idProduct);
         return wishlistService.findById(idWishlist)
                 .flatMap(wishlist -> perfomProductRemoval(wishlist, idProduct));
     }
@@ -91,7 +93,7 @@ public class GenerateWishlistService implements IGenerateWishlistService {
                 .filter(i -> StringUtils.equalsIgnoreCase(i.getProductId(), idProduct))
                 .findFirst();
 
-        ItemWishlist itemWishlist = optional.orElseThrow(() -> validateWishlist
+        ItemWishlist itemWishlist = optional.orElseThrow(() -> validateWishlistService
                 .getWishlistUnprocessableEntityException(String.format("Erro removing product in wish list. " +
                         "Product not found widh id: %s", idProduct)));
 
@@ -107,10 +109,11 @@ public class GenerateWishlistService implements IGenerateWishlistService {
     }
 
     private void performValidateWishList(Wishlist wishlist) {
+
         var strMsgDefault = " Trying to remove product in wish list. ";
 
         if (Objects.isNull(wishlist)) {
-            validateWishlist.throwsValidationErrorAndLogError(strMsgDefault + "Wishlist is invalid and/or " +
+            validateWishlistService.throwsValidationErrorAndLogError(strMsgDefault + "Wishlist is invalid and/or " +
                     "nonexistent (null).");
         }
     }

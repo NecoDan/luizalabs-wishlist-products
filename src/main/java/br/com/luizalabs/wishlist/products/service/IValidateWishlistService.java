@@ -4,7 +4,7 @@ import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistReque
 import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistUnProcessableEntityException;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 
-public interface IValidateWishlist {
+public interface IValidateWishlistService {
 
     void validadeInstanceWishlist(Wishlist wishlist);
 

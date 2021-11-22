@@ -11,12 +11,12 @@ import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 
 /**
@@ -28,7 +28,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "wishlist")
-public class Wishlist implements IGenerateCreatedDate {
+public class Wishlist implements IGenerateCreatedDate, IGenerateIdentifier {
 
     @Id
     @NonFinal
@@ -50,7 +50,8 @@ public class Wishlist implements IGenerateCreatedDate {
     private List<ItemWishlist> itemWishlist;
 
     public void generateId() {
-        this.id = IGenerateIdentifier.generateStringId();
+        // this.id = IGenerateIdentifier.generateStringId();
+        this.id = UUID.randomUUID().toString();
     }
 
     public Wishlist generateIdThis() {

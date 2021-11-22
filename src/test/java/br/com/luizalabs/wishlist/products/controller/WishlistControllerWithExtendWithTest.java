@@ -4,11 +4,16 @@ import br.com.luizalabs.wishlist.products.WishlistCreator;
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
 import br.com.luizalabs.wishlist.products.configuration.ModelMapperConfig;
 import br.com.luizalabs.wishlist.products.controller.api.WishlistController;
+import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
+import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
+import br.com.luizalabs.wishlist.products.model.IGenerateIdentifier;
+import br.com.luizalabs.wishlist.products.model.ItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.properties.TransactionProperties;
 import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
 import br.com.luizalabs.wishlist.products.service.GenerateWishlistService;
+import br.com.luizalabs.wishlist.products.service.ValidateWishlistService;
 import br.com.luizalabs.wishlist.products.service.WishlistReportService;
 import br.com.luizalabs.wishlist.products.service.WishlistService;
 import org.junit.jupiter.api.*;
@@ -24,16 +29,23 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.Assert;
+import org.springframework.web.reactive.function.BodyInserters;
 import reactor.blockhound.BlockHound;
 import reactor.blockhound.BlockingOperationError;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 
 /**
@@ -45,7 +57,7 @@ import static org.mockito.Mockito.times;
 @WebFluxTest(controllers = WishlistController.class)
 @Import({ModelMapperConfig.class, ModelMapper.class,
         GenerateWishlistService.class, WishlistReportService.class, TransactionProperties.class,
-        WishlistMapper.class})
+        WishlistMapper.class, ValidateWishlistService.class})
 public class WishlistControllerWithExtendWithTest {
 
     @MockBean
@@ -56,6 +68,8 @@ public class WishlistControllerWithExtendWithTest {
 
     @Autowired
     private WebTestClient webTestClient;
+
+    private ModelMapper modelMapper;
 
     private static final String URI = "/v1/wishlist/";
     private final static String LIST_NAME = "Lista desejos";
@@ -72,7 +86,7 @@ public class WishlistControllerWithExtendWithTest {
 
     @BeforeEach
     void initClient() {
-
+        this.modelMapper = WishlistCreator.createModelMapperForTests();
     }
 
     /**
@@ -95,8 +109,8 @@ public class WishlistControllerWithExtendWithTest {
         }
     }
 
-//    @Testw
-//    @DisplayName("find wishlist by id")
+    @Test
+    @DisplayName("find wishlist by id")
     void findByIdWishlistReturnMonoPautaWhenSuccessful() {
 
         var id = wishlist.getId();
@@ -124,17 +138,18 @@ public class WishlistControllerWithExtendWithTest {
         Mockito.verify(wishlistService, times(1)).findById(id);
     }
 
-//    @Test
-//    @DisplayName("listAll returns a flux of wish list 00")
+    @Test
+    @DisplayName("listAll returns a flux of wish list 00")
     void listAllFlavor2ReturnFluxOfWishlistWhenSuccessful() {
+
         var wishlistResponse = WishlistCreator.createModelMapperForTests()
                 .map(wishlist, WishlistDto.class);
 
         Mockito.when(wishlistService.findAll())
                 .thenReturn(Flux.just(wishlist,
-                        WishlistCreator.createdValidWishListToBeSaved("l1"),
-                        WishlistCreator.createdValidWishListToBeSaved("l2"),
-                        WishlistCreator.createdValidWishListToBeSaved("l3")
+                        WishlistCreator.createdValidWishListToBeSaved(UUID.randomUUID().toString()),
+                        WishlistCreator.createdValidWishListToBeSaved(UUID.randomUUID().toString()),
+                        WishlistCreator.createdValidWishListToBeSaved(UUID.randomUUID().toString())
                 ));
 
         webTestClient.get()
@@ -146,17 +161,18 @@ public class WishlistControllerWithExtendWithTest {
                 .contains(wishlistResponse);
     }
 
-//    @Test
-//    @DisplayName("listAll returns a flux of wish list 01")
+    @Test
+    @DisplayName("listAll returns a flux of wish list 01")
     void listAllReturnFluxOfWishlistWhenSuccessful() {
+
         var wishlistResponse = WishlistCreator.createModelMapperForTests()
                 .map(wishlist, WishlistDto.class);
 
         Mockito.when(wishlistService.findAll())
                 .thenReturn(Flux.just(wishlist,
-                        WishlistCreator.createdValidWishListToBeSaved("l1"),
-                        WishlistCreator.createdValidWishListToBeSaved("l2"),
-                        WishlistCreator.createdValidWishListToBeSaved("l3")
+                        WishlistCreator.createdValidWishListToBeSaved(UUID.randomUUID().toString()),
+                        WishlistCreator.createdValidWishListToBeSaved(UUID.randomUUID().toString()),
+                        WishlistCreator.createdValidWishListToBeSaved(UUID.randomUUID().toString())
                 ));
 
         webTestClient.get()
@@ -168,4 +184,77 @@ public class WishlistControllerWithExtendWithTest {
                 .jsonPath("$.[0].title").isEqualTo(wishlistResponse.getTitle())
                 .jsonPath("$.[0].client_id").isEqualTo(wishlistResponse.getClientId());
     }
+
+
+    @Test
+    @DisplayName("save creates an wish list when successful")
+    void saveCreatesWishlistWhenSuccessful() {
+
+        var wishlistSaved = this.wishlist;
+
+        var wishlistRequest = WishlistRequest.builder()
+                .title(wishlistSaved.getTitle())
+                .clientId(wishlistSaved.getClientId())
+                .itemWishlist(getListItemWishlistRequest(wishlistSaved.getItemWishlist()))
+                .build();
+
+        var wishlistResponse = WishlistCreator.createModelMapperForTests()
+                .map(wishlistSaved, WishlistDto.class);
+
+        Mockito.when(wishlistService.save(any(Wishlist.class)))
+                .thenReturn(Mono.just(wishlistSaved));
+
+        webTestClient.post()
+                .uri(URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(wishlistRequest))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(WishlistDto.class)
+                .value(wishlistDto -> {
+                    assertNotNull(wishlistDto);
+                    Assert.isTrue(wishlistDto.getId().equals(wishlistResponse.getId()), wishlist.getId());
+                    Assert.isTrue(wishlistDto.getTitle().equals(wishlistResponse.getTitle()), wishlist.getTitle());
+                    Assert.isTrue(wishlistDto.getClientId().equals(wishlistResponse.getClientId()), wishlist.getClientId());
+                    Assert.notNull(wishlistDto.getDtCreated());
+                    Assert.notNull(wishlistDto.getItemWishlist());
+                });
+
+//        webTestClient.get()
+//                .uri(URI + id)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .exchange()
+//                .expectStatus()
+//                .isOk()
+//                .expectBodyList(WishlistDto.class)
+//                .value(response -> {
+//                    assertNotNull(response);
+//                    Assert.isTrue(response.get(0).getId().equals(wishlistResponse.getId()), wishlist.getId());
+//                    Assert.isTrue(response.get(0).getTitle().equals(wishlistResponse.getTitle()), wishlist.getTitle());
+//                    Assert.isTrue(response.get(0).getClientId().equals(wishlistResponse.getClientId()), wishlist.getClientId());
+//                    Assert.notNull(response.get(0).getDtCreated());
+//                    Assert.notNull(response.get(0).getItemWishlist());
+//                });
+
+        Mockito.verify(wishlistService, times(1)).save(wishlistSaved);
+//        assertNotNull(response);
+//        assertThat(response.getId()).isEqualTo(wishlistSaved.getId());
+//        assertThat(response.getTitle()).isEqualTo(wishlistSaved.getTitle());
+//        assertThat(response.getClientId()).isEqualTo(wishlistSaved.getClientId());
+//        assertThat(response.getItemWishlist().size()).isEqualTo(wishlistSaved.getItemWishlist().size());
+    }
+
+    private List<ItemWishlistRequest> getListItemWishlistRequest(List<ItemWishlist> itemWishlist) {
+        return itemWishlist.stream().filter(Objects::nonNull)
+                .map(this::getItemWishlistRequestFrom)
+                .collect(Collectors.toList());
+    }
+
+    private ItemWishlistRequest getItemWishlistRequestFrom(ItemWishlist itemWishlist) {
+        return modelMapper.map(itemWishlist, ItemWishlistRequest.class);
+    }
+
+
 }
