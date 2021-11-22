@@ -86,8 +86,8 @@ public class WishlistControllerWebClientTest {
         this.generateWishlistServiceMock = new GenerateWishlistService(wishlistService, validateWishlistMock,
                 wishlistMapper);
 
-        WishlistController wishlistController =
-                new WishlistController(generateWishlistServiceMock, wishlistReportService, wishlistMapper);
+        WishlistController wishlistController = new WishlistController(generateWishlistServiceMock,
+                wishlistReportService, wishlistMapper);
 
         webTestClient = WebTestClient
                 .bindToController(wishlistController)
@@ -114,8 +114,6 @@ public class WishlistControllerWebClientTest {
         }
     }
 
-    @Test
-    @DisplayName("save creates an wish list when successful")
     void saveCreatesWishlistWhenSuccessful() {
 
         var wishlistSaved = this.wishlist;
@@ -131,7 +129,6 @@ public class WishlistControllerWebClientTest {
 
         Mockito.when(wishlistMapper.toWishlistFromRequest(any(WishlistRequest.class))).thenReturn(wishlistSaved);
         Mockito.when(wishlistRepositoryMock.save(any(Wishlist.class))).thenReturn(wishlistSaved);
-
         Mockito.when(wishlistMapper.toWishlistDtoFrom(any(Wishlist.class))).thenReturn(wishlistResponse);
 
         var response = webTestClient.post()

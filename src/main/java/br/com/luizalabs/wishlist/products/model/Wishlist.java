@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 
 /**
@@ -50,8 +49,7 @@ public class Wishlist implements IGenerateCreatedDate, IGenerateIdentifier {
     private List<ItemWishlist> itemWishlist;
 
     public void generateId() {
-        // this.id = IGenerateIdentifier.generateStringId();
-        this.id = UUID.randomUUID().toString();
+        this.id = IGenerateIdentifier.generateStringId();
     }
 
     public Wishlist generateIdThis() {
