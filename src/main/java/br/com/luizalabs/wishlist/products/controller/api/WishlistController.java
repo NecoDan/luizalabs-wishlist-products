@@ -1,8 +1,10 @@
 package br.com.luizalabs.wishlist.products.controller.api;
 
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
+import br.com.luizalabs.wishlist.products.dto.wishlist.request.ProductRemoveRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.ProductRequest;
 import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
+import br.com.luizalabs.wishlist.products.dto.wishlist.response.ProductItemWishlistDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.ResponseAcceptedDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
@@ -70,23 +72,24 @@ public class WishlistController {
 
     @PutMapping("/add_product/{id_wishlist}")
     // @Operation(summary = "Call to add new product for an existing wish list. Add a product to the customer's Wishlist", tags = "wishlist")
-    public Mono<ResponseEntity<ResponseAcceptedDto>> addProduct(@Valid @PathVariable("id_wishlist") String idWishlist,
-                                                                @Valid @RequestBody ProductRequest productRequest) {
+    public Mono<ResponseEntity<ResponseAcceptedDto>> addProductBy(@Valid @PathVariable("id_wishlist") String idWishlist,
+                                                                  @Valid @RequestBody ProductRequest request) {
 
         log.info("[luizalabs-wishlist-products] | Add product for an existing wish list by wishlist id and product request");
 
-        return generateWishlistService.addProduct(idWishlist, wishlistMapper.toWishlistRequestFrom(productRequest))
+        return generateWishlistService.addProduct(idWishlist, wishlistMapper.toWishlistRequestFrom(request))
                 .map(this::buildResponseAcceptedDtoFrom)
                 .map(response -> ResponseEntity.status(HttpStatus.ACCEPTED)
                         .body(response))
                 .doOnSuccess(response -> log.info("[luizalabs-wishlist-products] | Product successfully add from wishlist: {}", response));
     }
 
-    @DeleteMapping("/{id_wishlist}/remove_product/{id_product}")
+    @DeleteMapping("/remove_product/{id_wishlist}")
     // @Operation(summary = "Call to remove product for an existing wish list. Remove a product from the customer's Wishlist", tags = "wishlist")
-    public Mono<ResponseEntity<ResponseAcceptedDto>> deleteProduct(@Valid @PathVariable("id_wishlist") String idWishlist,
-                                                                   @Valid @PathVariable("id_product") String idProduct) {
+    public Mono<ResponseEntity<ResponseAcceptedDto>> deleteProductBy(@Valid @PathVariable("id_wishlist") String idWishlist,
+                                                                     @Valid @RequestBody ProductRemoveRequest request) {
 
+        var idProduct = request.getIdProduct();
         log.info("[luizalabs-wishlist-products] | Remove product for an existing wish list by wishlist_id: {{}} " +
                 " and product_id: {{}}", idWishlist, idProduct);
 
@@ -96,6 +99,16 @@ public class WishlistController {
                         .body(response))
                 .doOnSuccess(response -> log.info("[luizalabs-wishlist-products] | Product successfully removed from wishlist: {}", response));
     }
+
+    @GetMapping("/find_product")
+    public Mono<ProductItemWishlistDto> findProductBy(@Valid @RequestParam("client_id") String idClient,
+                                                      @Valid @RequestParam("product_id") String idProduct) {
+
+        log.info("[luizalabs-wishlist-products] | Searching all existing product(s) wish list by client");
+        return wishlistReportService.getProductByClientInWishlist(idClient, idProduct)
+                .doOnSuccess(p -> log.info("[luizalabs-wishlist-products] | Returning product: {}", p));
+    }
+
 
     private ResponseAcceptedDto buildResponseAcceptedDto(boolean accepted) {
         return ResponseAcceptedDto.builder().build().loadContentProcessed(accepted);

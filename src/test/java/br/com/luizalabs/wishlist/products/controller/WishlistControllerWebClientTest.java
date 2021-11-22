@@ -81,7 +81,7 @@ public class WishlistControllerWebClientTest {
         this.wishlistMapper = Mockito.mock(WishlistMapper.class);
         this.wishlistRepository = Mockito.mock(WishlistRepository.class);
         this.wishlistService = new WishlistService(wishlistRepository);
-        this.wishlistReportService = new WishlistReportService(wishlistService, wishlistMapper, wishlistRepository);
+        this.wishlistReportService = new WishlistReportService(wishlistService, wishlistMapper);
 
         this.transactionProperties = Mockito.mock(TransactionProperties.class);
         this.generateWishlistService = new GenerateWishlistService(wishlistService, validateWishlist,

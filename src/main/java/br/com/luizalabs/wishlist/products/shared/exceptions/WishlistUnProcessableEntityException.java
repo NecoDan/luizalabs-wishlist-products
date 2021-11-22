@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
  * @author Daniel Santos
  * @since 15/11/2021
  */
-public class WishlistUnprocessableEntityException extends HttpException {
+public class WishlistUnProcessableEntityException extends HttpException {
 
-    public WishlistUnprocessableEntityException(String message) {
+    public WishlistUnProcessableEntityException(String message) {
         super(String.format("Could not process the wishlist: %s.", message));
     }
 

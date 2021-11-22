@@ -1,6 +1,7 @@
 package br.com.luizalabs.wishlist.products.service;
 
 import br.com.luizalabs.wishlist.products.model.Wishlist;
+import org.springframework.data.mongodb.repository.Query;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

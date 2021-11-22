@@ -56,8 +56,8 @@ class WishlistServiceTest {
     @DisplayName("should search wishlist findById returning error")
     void shouldSearchPautaReturningError() {
 
-        when(wishlistRepository.findById(anyString()))
-                .thenReturn(Mono.empty());
+        when(Mono.just(wishlistRepository.findById(anyString()))
+                .thenReturn(Mono.empty()));
 
         assertThrows(WishlistNotFoundException.class,
                 () -> wishlistService.findById(UUID.randomUUID().toString()).block()

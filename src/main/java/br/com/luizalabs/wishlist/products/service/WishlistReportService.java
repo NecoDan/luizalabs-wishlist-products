@@ -3,18 +3,19 @@ package br.com.luizalabs.wishlist.products.service;
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.ProductItemWishlistDto;
 import br.com.luizalabs.wishlist.products.model.ItemWishlist;
-import br.com.luizalabs.wishlist.products.model.ProductItemWishlist;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
-import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
-import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistNotFoundException;
+import br.com.luizalabs.wishlist.products.shared.exceptions.ProductItemWishlistNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +30,6 @@ public class WishlistReportService implements IWishlistReportService {
 
     private final WishlistService wishlistService;
     private final WishlistMapper wishlistMapper;
-    private final WishlistRepository wishlistRepository;
 
     @Override
     public Flux<Wishlist> getAll() {
@@ -42,58 +42,39 @@ public class WishlistReportService implements IWishlistReportService {
     }
 
     @Override
-    public Mono<ProductItemWishlist> getProductByClientInWishlist(String idClient, String idProduct) {
+    public Mono<ProductItemWishlistDto> getProductByClientInWishlist(String idClient, String idProduct) {
 
-//        Mono<String> result = wishlistRepository.getWishListClientIdProductIdFrom(idClient, idProduct);
+        List<Wishlist> wishlists = this.wishlistService
+                .findAllWishListClientIdAndProductId(idClient, idProduct);
 
-        //Flux<Wishlist> wishlistFlux = wishlistRepository.getWishListClientIdProductIdFrom(idClient, idProduct);
-//
-        Flux<Wishlist> wishlistFlux = wishlistRepository.findAllByClientId(idClient)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistNotFoundException(idClient))));
-//
-        return wishlistFlux.map(this::getItemWishlistByProductsId)
-                .flatMap(itemWishlists -> outFrom(itemWishlists))
-                .single();
+        if (wishlists.isEmpty()) {
+            throw getProductItemWishlistNotFoundException(idProduct, idClient);
+        }
 
-//        Mono<Wishlist> productItemWishlistMono = wishlistRepository
-//                .getWishListClientIdProductIdFrom(idClient, idProduct)
-//                .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistNotFoundException(idClient))));
+        var productItemWishlist = getItemWishlistByProductsId(wishlists, idProduct)
+                .map(this::getProductItemWishlistDto)
+                .orElseThrow(() -> getProductItemWishlistNotFoundException(idProduct, idClient));
 
-//        return productItemWishlistMono.flatMap(wishlist -> out(wishlist));
-//        log.info("Result: {}", result);
-//
-//        stringMono.doOnEach(s -> log.info("{}", s));
-//        Flux<Object> wishlistFlux = Flux.fromIterable(Collections.emptyList())
-//            .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistNotFoundException(idClient))));
-
-//        return Flux.fromIterable(List.of(ProductItemWishlist.builder().build()));
+        return Mono.just(productItemWishlist)
+                .switchIfEmpty(Mono.defer(()
+                        -> Mono.error(getProductItemWishlistNotFoundException(idProduct, idClient))));
     }
 
-    public Mono<ProductItemWishlist> out(Wishlist str) {
+    @Override
+    public Optional<ItemWishlist> getItemWishlistByProductsId(List<Wishlist> wishlists, String idProduct) {
 
-        System.out.println("Chegou aqui....");
-        log.info("{}", str);
+        List<ItemWishlist> itemWishlistsAll = new ArrayList<>();
+        wishlists.forEach(wishlist -> itemWishlistsAll.addAll(wishlist.getItemWishlist()));
 
-        return Mono.just(ProductItemWishlist.builder().build());
-    }
-
-    public Mono<ProductItemWishlist> outFrom(List<ItemWishlist> itemWishlists) {
-
-        System.out.println("Chegou aqui....");
-        log.info("{}", itemWishlists);
-
-        return Mono.just(ProductItemWishlist.builder().build());
-    }
-
-    private List<ItemWishlist> getItemWishlistByProductsId(Wishlist wishlist) {
-
-        System.out.println("Chegou aqui....");
-        log.info("{}", wishlist);
-
-        return wishlist.getItemWishlist()
+        return itemWishlistsAll.stream()
+                .filter(Objects::nonNull)
+                .filter(i -> StringUtils.equalsIgnoreCase(i.getProductId(), idProduct))
+                .collect(Collectors.groupingBy(ItemWishlist::getProductId))
+                .get(idProduct)
                 .stream()
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .filter(i -> StringUtils.equalsIgnoreCase(i.getProductId(), idProduct))
+                .findFirst();
     }
 
     private ProductItemWishlistDto getProductItemWishlistDto(ItemWishlist itemWishlist) {
@@ -102,5 +83,10 @@ public class WishlistReportService implements IWishlistReportService {
 
     private ProductItemWishlistDto convertToProductItemWishlistDto(ItemWishlist itemWishlist) {
         return wishlistMapper.toProductItemWishlistDtoFrom(itemWishlist);
+    }
+
+    private ProductItemWishlistNotFoundException getProductItemWishlistNotFoundException(String idProduct,
+                                                                                         String idClient) {
+        return new ProductItemWishlistNotFoundException("", idProduct, idClient);
     }
 }

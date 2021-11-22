@@ -53,18 +53,18 @@ public class WishlistServiceBDDTest {
 
     @BeforeEach
     public void setUp() {
+//
+//        BDDMockito.when(Flux.just(wishlistRepository.findAll()))
+//                .thenReturn(Flux.just(wishlist));
+//
+//        BDDMockito.when(wishlistRepository.findById(ArgumentMatchers.anyString()))
+//                .thenReturn(Mono.just(wishlist));
 
-        BDDMockito.when(wishlistRepository.findAll())
-                .thenReturn(Flux.just(wishlist));
-
-        BDDMockito.when(wishlistRepository.findById(ArgumentMatchers.anyString()))
+        BDDMockito.when(Mono.just(wishlistRepository.save(WishlistCreator.createdValidWishListToBeSaved(LIST_NAME))))
                 .thenReturn(Mono.just(wishlist));
 
-        BDDMockito.when(wishlistRepository.save(WishlistCreator.createdValidWishListToBeSaved(LIST_NAME)))
-                .thenReturn(Mono.just(wishlist));
-
-        BDDMockito.when(wishlistRepository.delete(ArgumentMatchers.any(Wishlist.class)))
-                .thenReturn(Mono.empty());
+//        BDDMockito.when(wishlistRepository.delete(ArgumentMatchers.any(Wishlist.class)))
+//                .thenReturn(Mono.empty());
     }
 
     /**
@@ -131,7 +131,7 @@ public class WishlistServiceBDDTest {
     @Test
     @DisplayName("findById returns Mono error when pauta does not exist")
     void findByIdReturnMonoErrorWhenEmptyMonoIsReturned() {
-        BDDMockito.when(wishlistRepository.findById(ArgumentMatchers.anyString()))
+        BDDMockito.when(Mono.just(wishlistRepository.findById(ArgumentMatchers.anyString())))
                 .thenReturn(Mono.empty());
 
         StepVerifier.create(wishlistService.findById(UUID.randomUUID().toString()))

@@ -3,7 +3,7 @@ package br.com.luizalabs.wishlist.products.controller.events;
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.ResponseAcceptedDto;
 import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
-import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistUnprocessableEntityException;
+import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistUnProcessableEntityException;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.service.IGenerateWishlistService;
 import br.com.luizalabs.wishlist.products.service.IWishlistReportService;
@@ -66,7 +66,7 @@ public class WishlistHandler {
         log.info("[luizalabs-wishlist-products] | Call to create wishtlist: {}.", wishlistRequest);
 
         final Mono<Wishlist> wishlistSave = wishlistRequest.flatMap(generateWishlistService::create)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistUnprocessableEntityException(wishlistRequest.toString()))));
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistUnProcessableEntityException(wishlistRequest.toString()))));
 
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)

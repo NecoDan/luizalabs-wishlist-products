@@ -3,8 +3,8 @@ package br.com.luizalabs.wishlist.products.configuration;
 
 import br.com.luizalabs.wishlist.products.dto.api.ErrorResponseDto;
 import br.com.luizalabs.wishlist.products.dto.api.Response;
-import br.com.luizalabs.wishlist.products.shared.exceptions.HttpException;
 import br.com.luizalabs.wishlist.products.shared.FormatterUtil;
+import br.com.luizalabs.wishlist.products.shared.exceptions.HttpException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,14 +37,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdviceControllerConfig {
 
-//    private final HttpServletRequest request;
+//    private final ServerHttpRequest request;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Throwable throwable) {
 
         log.error(throwable.getMessage(), throwable);
         var httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        var  errorApiResponse = buildErrorApiResponse(throwable.getMessage(), httpStatus.getReasonPhrase(), httpStatus);
+        var errorApiResponse = buildErrorApiResponse(throwable.getMessage(), httpStatus.getReasonPhrase(), httpStatus);
 
         var response = Response.<ErrorResponseDto>builder().data(errorApiResponse).build();
         return ResponseEntity.status(httpStatus).body(response);
@@ -149,13 +149,17 @@ public class AdviceControllerConfig {
     }
 
     private String getPathUri() {
+//        RequestPath path = this.request.getPath();
+//        Principal principal = this.request.getPrincipal();
         return "";
 //        return getFullRouteRequest();
     }
 
-//    public String getVerbMethodRequest() {
-//        return this.request.getMethod();
-//    }
+    public String getVerbMethodRequest() {
+//        RequestPath path = this.request.getPath();
+//        Principal principal = this.request.getPrincipal();
+        return "";
+    }
 //
 //    public String pathRequestURI() {
 //        return this.request.getRequestURI().substring(this.request.getContextPath().length());
