@@ -3,7 +3,6 @@ package br.com.luizalabs.wishlist.products.service;
 import br.com.luizalabs.wishlist.products.model.Wishlist;
 import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
 import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistNotFoundException;
-import br.com.luizalabs.wishlist.products.shared.exceptions.WishlistUnProcessableEntityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,13 +38,6 @@ public class WishlistService implements IWishlistService {
     }
 
     @Override
-    public Mono<Wishlist> getOneSavedById(String id) {
-        return Mono.just(this.wishlistRepository.findById(id)
-                .orElseThrow(() -> new WishlistNotFoundException("", id)))
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new WishlistUnProcessableEntityException(id))));
-    }
-
-    @Override
     @Transactional
     public Mono<Wishlist> save(Wishlist wishlist) {
         return Mono.just(this.wishlistRepository.save(wishlist));
@@ -61,9 +53,8 @@ public class WishlistService implements IWishlistService {
 
     @Override
     @Transactional
-    public Mono<Void> delete(String id) {
+    public void delete(String id) {
         this.wishlistRepository.deleteById(id);
-        return Mono.empty();
     }
 
     @Override
@@ -71,7 +62,13 @@ public class WishlistService implements IWishlistService {
         return Flux.fromIterable(this.wishlistRepository.findAllByClientId(idClient));
     }
 
+    @Override
     public List<Wishlist> findAllWishListClientIdAndProductId(String idClient, String idProduct) {
         return this.wishlistRepository.findAllWishListClientIdAndProductId(idClient, idProduct);
+    }
+
+    @Override
+    public Flux<Wishlist> findWishListClientIdAndProductId(String idClient, String idProduct) {
+        return Flux.fromIterable(findAllWishListClientIdAndProductId(idClient, idProduct));
     }
 }

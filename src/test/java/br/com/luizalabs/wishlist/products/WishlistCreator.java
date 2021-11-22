@@ -41,7 +41,14 @@ public class WishlistCreator {
     }
 
     public static Wishlist createdValidWishListWithItems(String title, List<ItemWishlist> itemWishlists) {
-        return createdValidWishListNoItems(title).addAllItemWishlistThis(itemWishlists);
+
+        Wishlist wishlistSave = createdValidWishListNoItems(title).addAllItemWishlistThis(itemWishlists);
+        wishlistSave.generateId();
+        wishlistSave.generateDtCreated();
+        wishlistSave.popularItemsWishList();
+        wishlistSave.loadTotalProductsItems();
+
+        return wishlistSave;
     }
 
     public static Wishlist createdValidWishListNoItems(String title) {
@@ -63,7 +70,11 @@ public class WishlistCreator {
                 WishlistCreator.createdItemWishlist(UUID.randomUUID(),
                         "Tenis Reebook Serie XIX"));
 
-        return createdValidWishListNoItems(title).addAllItemWishlistThis(itemWishlists);
+        var wishlist = createdValidWishListNoItems(title).addAllItemWishlistThis(itemWishlists);
+        wishlist.popularItemsWishList();
+        wishlist.loadTotalProductsItems();
+
+        return wishlist;
     }
 
     public static ItemWishlist createdItemWishlist(UUID idProduct, String nameProduct) {
