@@ -31,7 +31,6 @@ public class StreamEventsController {
     private static final Integer DURATION_SECONDS = 5;
 
     @GetMapping(value = "/wishlist/produces", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-//    @Operation(summary = "Searching all existing wishlist(s)", tags = "events-stream")
     public Flux<Tuple2<Long, WishlistDto>> getWishlistByEvents() {
         log.info("[luizalabs-wishlist-products] [events]");
         log.info("[luizalabs-wishlist-products] [events] | Running event stream wishlist(s)");
