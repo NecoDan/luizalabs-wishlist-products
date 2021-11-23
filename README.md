@@ -47,14 +47,17 @@
    
   #### Endpoints: 
   
-  Utilizando a ferramenta de documentação de endpoints ```Swagger```, pode-se visualizar todos os endpoints disponíveis. Basta acessar a documentação da API via [Swagger](http://localhost:8080/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config). 
-  <br><br> Logo após inicialização da aplicação. De sorte que, segue a lista de alguns endpoints para conhecimento: 
+  Logo após inicialização da aplicação. Alguns endpoints para conhecimento com reecursos disponíveis via endpoints a serem acessados.
+ <br><br>
   
-  - Retornar uma lista completa de produtos existentes na lista de desejos:
-    - `http://localhost:8080/v1/wishlist`
+  - Retornar toda a coleção de wishlist com os seus respectivos produtos:
+    - `http://localhost:8095/v1/wishlist`
+    
+  - Retornar uma unica coleção de wishlist com os seus respectivos produtos:
+    - `http://localhost:8095/v1/wishlist/{id_wishlist}`
     
   - Retornar um único produto que esteja adicionado à lista de desjos, a partir de um identificador único:
-    - `http://localhost:8080/v1/wishlist/products/{id}`
+    - `http://localhost:8095/v1/wishlist/products/{id}`
       
  Entre outros, aos quais podem ser identificados no endereço fornecido pelo [Swagger](http://localhost:8080/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config).
  <br><br>

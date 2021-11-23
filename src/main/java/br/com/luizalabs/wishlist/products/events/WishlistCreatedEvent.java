@@ -1,6 +1,6 @@
 package br.com.luizalabs.wishlist.products.events;
 
-import br.com.luizalabs.wishlist.products.model.Wishlist;
+import br.com.luizalabs.wishlist.products.data.db.jpa.entities.Wishlist;
 import org.springframework.context.ApplicationEvent;
 
 /**

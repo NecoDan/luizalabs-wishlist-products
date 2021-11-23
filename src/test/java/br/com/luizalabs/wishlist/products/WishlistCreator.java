@@ -1,12 +1,12 @@
 package br.com.luizalabs.wishlist.products;
 
 
-import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
-import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
-import br.com.luizalabs.wishlist.products.dto.wishlist.response.ItemWishlistDto;
-import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
-import br.com.luizalabs.wishlist.products.model.ItemWishlist;
-import br.com.luizalabs.wishlist.products.model.Wishlist;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.request.ItemWishlistRequest;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.request.WishlistRequest;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.response.ItemWishlistResponse;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.response.WishlistResponse;
+import br.com.luizalabs.wishlist.products.data.db.jpa.entities.ItemWishlist;
+import br.com.luizalabs.wishlist.products.data.db.jpa.entities.Wishlist;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -32,8 +32,8 @@ public class WishlistCreator {
     public static ModelMapper createModelMapperForTests() {
 
         var modelMapper = new ModelMapper();
-        modelMapper.createTypeMap(Wishlist.class, WishlistDto.class);
-        modelMapper.createTypeMap(ItemWishlist.class, ItemWishlistDto.class);
+        modelMapper.createTypeMap(Wishlist.class, WishlistResponse.class);
+        modelMapper.createTypeMap(ItemWishlist.class, ItemWishlistResponse.class);
         modelMapper.createTypeMap(ItemWishlistRequest.class, ItemWishlist.class);
         modelMapper.createTypeMap(WishlistRequest.class, Wishlist.class);
 

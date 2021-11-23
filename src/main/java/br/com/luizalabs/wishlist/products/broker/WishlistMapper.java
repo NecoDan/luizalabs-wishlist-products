@@ -1,14 +1,14 @@
 package br.com.luizalabs.wishlist.products.broker;
 
 
-import br.com.luizalabs.wishlist.products.configuration.ModelMapperConfig;
-import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
-import br.com.luizalabs.wishlist.products.dto.wishlist.request.ProductRequest;
-import br.com.luizalabs.wishlist.products.dto.wishlist.request.WishlistRequest;
-import br.com.luizalabs.wishlist.products.dto.wishlist.response.ProductItemWishlistDto;
-import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
-import br.com.luizalabs.wishlist.products.model.ItemWishlist;
-import br.com.luizalabs.wishlist.products.model.Wishlist;
+import br.com.luizalabs.wishlist.products.presenter.config.ModelMapperConfig;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.request.ItemWishlistRequest;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.request.ProductRequest;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.request.WishlistRequest;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.response.ProductItemWishlistResponse;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.response.WishlistResponse;
+import br.com.luizalabs.wishlist.products.data.db.jpa.entities.ItemWishlist;
+import br.com.luizalabs.wishlist.products.data.db.jpa.entities.Wishlist;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,11 +22,11 @@ public class WishlistMapper {
 
     private final ModelMapperConfig modelMapperConfig;
 
-    public WishlistDto toWishlistDtoFrom(Wishlist entity) {
-        return this.modelMapperConfig.modelMapper().map(entity, WishlistDto.class);
+    public WishlistResponse toWishlistDtoFrom(Wishlist entity) {
+        return this.modelMapperConfig.modelMapper().map(entity, WishlistResponse.class);
     }
 
-    public Wishlist toWishlistFrom(WishlistDto entity) {
+    public Wishlist toWishlistFrom(WishlistResponse entity) {
         return this.modelMapperConfig.modelMapper().map(entity, Wishlist.class);
     }
 
@@ -42,8 +42,8 @@ public class WishlistMapper {
         return this.modelMapperConfig.modelMapper().map(entity, ItemWishlist.class);
     }
 
-    public ProductItemWishlistDto toProductItemWishlistDtoFrom(ItemWishlist entity) {
-        return this.modelMapperConfig.modelMapper().map(entity, ProductItemWishlistDto.class);
+    public ProductItemWishlistResponse toProductItemWishlistDtoFrom(ItemWishlist entity) {
+        return this.modelMapperConfig.modelMapper().map(entity, ProductItemWishlistResponse.class);
     }
 
 }

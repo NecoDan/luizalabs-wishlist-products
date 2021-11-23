@@ -2,18 +2,18 @@ package br.com.luizalabs.wishlist.products.controller;
 
 import br.com.luizalabs.wishlist.products.WishlistCreator;
 import br.com.luizalabs.wishlist.products.broker.WishlistMapper;
-import br.com.luizalabs.wishlist.products.configuration.ModelMapperConfig;
-import br.com.luizalabs.wishlist.products.controller.api.WishlistController;
-import br.com.luizalabs.wishlist.products.dto.wishlist.request.ItemWishlistRequest;
-import br.com.luizalabs.wishlist.products.dto.wishlist.response.WishlistDto;
-import br.com.luizalabs.wishlist.products.model.ItemWishlist;
-import br.com.luizalabs.wishlist.products.model.Wishlist;
-import br.com.luizalabs.wishlist.products.properties.TransactionProperties;
-import br.com.luizalabs.wishlist.products.repository.WishlistRepository;
-import br.com.luizalabs.wishlist.products.service.GenerateWishlistService;
-import br.com.luizalabs.wishlist.products.service.ValidateWishlistService;
-import br.com.luizalabs.wishlist.products.service.WishlistReportService;
-import br.com.luizalabs.wishlist.products.service.WishlistService;
+import br.com.luizalabs.wishlist.products.presenter.config.ModelMapperConfig;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.wishlist.WishlistController;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.request.ItemWishlistRequest;
+import br.com.luizalabs.wishlist.products.presenter.rest.api.entities.response.WishlistResponse;
+import br.com.luizalabs.wishlist.products.data.db.jpa.entities.ItemWishlist;
+import br.com.luizalabs.wishlist.products.data.db.jpa.entities.Wishlist;
+import br.com.luizalabs.wishlist.products.presenter.config.properties.TransactionProperties;
+import br.com.luizalabs.wishlist.products.data.db.jpa.repositories.JpaWishlistRepository;
+import br.com.luizalabs.wishlist.products.core.usecases.wishlist.service.GenerateWishlistService;
+import br.com.luizalabs.wishlist.products.core.usecases.wishlist.service.ValidateWishlistService;
+import br.com.luizalabs.wishlist.products.core.usecases.wishlist.service.WishlistReportService;
+import br.com.luizalabs.wishlist.products.core.usecases.wishlist.service.WishlistService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -57,7 +57,7 @@ import static org.mockito.Mockito.times;
 public class WishlistControllerWithExtendWithTest {
 
     @MockBean
-    WishlistRepository wishlistRepository;
+    JpaWishlistRepository jpaWishlistRepository;
 
     @MockBean
     WishlistService wishlistService;
@@ -112,7 +112,7 @@ public class WishlistControllerWithExtendWithTest {
 
         var id = wishlist.getId();
         var wishlistResponse = WishlistCreator.createModelMapperForTests()
-                .map(wishlist, WishlistDto.class);
+                .map(wishlist, WishlistResponse.class);
 
         Mockito.when(wishlistService.findById(id)).thenReturn(Mono.just(wishlist));
 
@@ -122,7 +122,7 @@ public class WishlistControllerWithExtendWithTest {
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .expectBodyList(WishlistDto.class)
+                .expectBodyList(WishlistResponse.class)
                 .value(response -> {
                     assertNotNull(response);
                     Assert.isTrue(response.get(0).getId().equals(wishlistResponse.getId()), wishlist.getId());
@@ -140,7 +140,7 @@ public class WishlistControllerWithExtendWithTest {
     void listAllFlavor2ReturnFluxOfWishlistWhenSuccessful() {
 
         var wishlistResponse = WishlistCreator.createModelMapperForTests()
-                .map(wishlist, WishlistDto.class);
+                .map(wishlist, WishlistResponse.class);
 
         Mockito.when(wishlistService.findAll())
                 .thenReturn(Flux.just(wishlist,
@@ -153,7 +153,7 @@ public class WishlistControllerWithExtendWithTest {
                 .uri(URI)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(WishlistDto.class)
+                .expectBodyList(WishlistResponse.class)
                 .hasSize(4)
                 .contains(wishlistResponse);
     }
@@ -163,7 +163,7 @@ public class WishlistControllerWithExtendWithTest {
     void listAllReturnFluxOfWishlistWhenSuccessful() {
 
         var wishlistResponse = WishlistCreator.createModelMapperForTests()
-                .map(wishlist, WishlistDto.class);
+                .map(wishlist, WishlistResponse.class);
 
         Mockito.when(wishlistService.findAll())
                 .thenReturn(Flux.just(wishlist,
