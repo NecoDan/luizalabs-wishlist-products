@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 13/11/2021
  */
 @SpringBootApplication
+//@ComponentScan(basePackages = {"br.com.luizalabs.wishlist.products.*/**/"})
 public class WishlistProductsApplication {
 
     public static void main(String[] args) {
