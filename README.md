@@ -38,25 +38,22 @@
    Executar os comandos: <br><br>
    ```docker-compose build```<br> 
    ```docker-compose up```<br><br> 
-   Logo após, inicializará a aplicação ```wishlist-products```, junto com uma instância do MongoDB dockerizada (nesse momento será criado apenas uma collection denominado ```wishlist``` no banco de dados).
-   Com a finalidade de gerenciar, registrar e efetuar as operações relacionadas a lista de desejos.
-  <br> 
-  ###### Utilizando diretamente o jar:
-  ```mvn clean install```<br>
-  ```java -jar target/wishlist-products-1.0.jar```<br><br>
+   Logo após, inicializará a aplicação ```app-wishlist```, junto com uma instância do MongoDB dockerizada (nesse momento será criado apenas uma collection denominado ```wishlist``` no banco de dados).
+   
+   Com a finalidade de gerenciar, registrar e efetuar as operações relacionadas a lista de desejos a partir da url: [app-wishlist](http://localhost:8095/v1/wishlist).
    
   #### Endpoints: 
-  
-  Utilizando a ferramenta de documentação de endpoints ```Swagger```, pode-se visualizar todos os endpoints disponíveis. Basta acessar a documentação da API via [Swagger](http://localhost:8080/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config). 
+  <br>
+  Utilizando a ferramenta de documentação de endpoints ```Swagger```, pode-se visualizar todos os endpoints disponíveis. Basta acessar a documentação da API via [Swagger](http://localhost:8095/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config). 
   <br><br> Logo após inicialização da aplicação. De sorte que, segue a lista de alguns endpoints para conhecimento: 
   
-  - Retornar uma lista completa de produtos existentes na lista de desejos:
+  - Retornar uma coleção de wishlist completa, com os produtos existentes:
     - `http://localhost:8080/v1/wishlist`
     
-  - Retornar um único produto que esteja adicionado à lista de desjos, a partir de um identificador único:
-    - `http://localhost:8080/v1/wishlist/products/{id}`
+  - Retornar uma única wishlist com todos os produtos adicionados, a partir de um identificador único:
+    - `http://localhost:8080/v1/wishlist/{id}`
       
- Entre outros, aos quais podem ser identificados no endereço fornecido pelo [Swagger](http://localhost:8080/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config).
+ Entre outros, aos quais podem ser identificados no endereço fornecido pelo [Swagger](http://localhost:8095/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config).
  <br><br>
 
   
