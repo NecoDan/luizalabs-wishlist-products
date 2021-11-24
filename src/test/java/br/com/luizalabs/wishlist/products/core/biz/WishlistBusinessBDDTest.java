@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.anyString;
  * @since 15/11/2021
  */
 @ExtendWith(SpringExtension.class)
-public class WishlistServiceBDDTest {
+public class WishlistBusinessBDDTest {
 
     @Mock
     private WishlistRepository wishlistRepository;

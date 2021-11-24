@@ -1,13 +1,15 @@
-package br.com.luizalabs.wishlist.products.delivery.controller;
+package br.com.luizalabs.wishlist.products.delivery.wishlist;
 
 
 import br.com.luizalabs.wishlist.products.core.biz.GenerateWishlistBusiness;
 import br.com.luizalabs.wishlist.products.core.biz.ValidateWishlistBusiness;
 import br.com.luizalabs.wishlist.products.core.biz.WishlistBusiness;
 import br.com.luizalabs.wishlist.products.core.biz.WishlistReportBusiness;
+import br.com.luizalabs.wishlist.products.core.usercase.*;
 import br.com.luizalabs.wishlist.products.data.entities.ItemWishlist;
 import br.com.luizalabs.wishlist.products.data.entities.Wishlist;
 import br.com.luizalabs.wishlist.products.data.repositories.WishlistRepository;
+import br.com.luizalabs.wishlist.products.delivery.commons.GlobalExceptionHandler;
 import br.com.luizalabs.wishlist.products.delivery.entities.wishlist.request.ItemWishlistRequest;
 import br.com.luizalabs.wishlist.products.delivery.entities.wishlist.request.WishlistRequest;
 import br.com.luizalabs.wishlist.products.delivery.entities.wishlist.response.WishlistResponse;
@@ -52,13 +54,19 @@ import static org.mockito.ArgumentMatchers.any;
 public class WishlistControllerWebClientTest {
 
     private WishlistRepository wishlistRepositoryMock;
-    private WishlistBusiness wishlistService;
+    private WishlistBusiness wishlistBusiness;
     private WishlistReportBusiness wishlistReportBusiness;
     private GenerateWishlistBusiness generateWishlistBusinessMock;
     private ModelMapper modelMapper;
     private WishlistMapper wishlistMapper;
     private ParamLimitProductProperties properties;
     private ValidateWishlistBusiness validateWishlistMock;
+    private GetAllWishlistUseCaseImpl getAllWishlistUseCase;
+    private GetOneByIdWishlistUseCaseImpl getOneByIdWishlistUseCase;
+    private GetOneProductByClientIdProductIdUseCaseImpl getOneProductByClientIdProductIdUseCase;
+    private PostOneWishlistUseCaseImpl postOneWishlistUseCase;
+    private AddSingleProductWishlistUseCaseImpl addSingleProductWishlistUseCase;
+    private DeleteProductWishlistUseCaseImpl deleteProductWishlistUseCase;
 
     @Autowired
     private WebTestClient webTestClient;
@@ -79,25 +87,27 @@ public class WishlistControllerWebClientTest {
     @BeforeEach
     void initClient() {
 
-//        this.modelMapper = WishlistCreator.createModelMapperForTests();
-//
-//        this.wishlistMapper = Mockito.mock(WishlistMapper.class);
-//        this.wishlistRepositoryMock = Mockito.mock(WishlistRepository.class);
-//        this.wishlistService = new WishlistService(wishlistRepositoryMock);
-//        this.wishlistReportService = new WishlistReportService(wishlistService, wishlistMapper);
-//
-//        this.validateWishlistMock = Mockito.mock(ValidateWishlistService.class);
-//        this.transactionPropertiesMock = Mockito.mock(TransactionProperties.class);
-//        this.generateWishlistServiceMock = new GenerateWishlistService(wishlistService, validateWishlistMock,
-//                wishlistMapper);
-//
-//        WishlistController wishlistController = new WishlistController(generateWishlistServiceMock,
-//                wishlistReportService, wishlistMapper);
-//
-//        webTestClient = WebTestClient
-//                .bindToController(wishlistController)
-//                .controllerAdvice(GlobalExceptionHandler.class)
-//                .build();
+        this.modelMapper = WishlistCreator.createModelMapperForTests();
+
+        this.wishlistMapper = Mockito.mock(WishlistMapper.class);
+        this.wishlistRepositoryMock = Mockito.mock(WishlistRepository.class);
+        this.wishlistBusiness = new WishlistBusiness(wishlistRepositoryMock);
+        this.wishlistReportBusiness = new WishlistReportBusiness(wishlistBusiness, wishlistMapper);
+
+        this.validateWishlistMock = Mockito.mock(ValidateWishlistBusiness.class);
+        this.properties = Mockito.mock(ParamLimitProductProperties.class);
+        this.generateWishlistBusinessMock = new GenerateWishlistBusiness(wishlistBusiness, validateWishlistMock,
+                wishlistMapper);
+
+        WishlistController wishlistController = new WishlistController(
+                getAllWishlistUseCase, getOneByIdWishlistUseCase, getOneProductByClientIdProductIdUseCase,
+                postOneWishlistUseCase, addSingleProductWishlistUseCase, deleteProductWishlistUseCase,
+                wishlistMapper);
+
+        webTestClient = WebTestClient
+                .bindToController(wishlistController)
+                .controllerAdvice(GlobalExceptionHandler.class)
+                .build();
     }
 
     /**
@@ -120,7 +130,6 @@ public class WishlistControllerWebClientTest {
     }
 
     void saveCreatesWishlistWhenSuccessful() {
-
         var wishlistSaved = this.wishlist;
 
         var wishlistRequest = WishlistRequest.builder()
