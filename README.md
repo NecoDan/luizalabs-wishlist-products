@@ -31,7 +31,9 @@
   - Banco de dados MongoDB;
      - ```Banco de dados orientado a documentos facil de escalar e com driver que suporta programação reativa.```
      
-  - Docker utilizando o compose;<br><br>
+  - Docker utilizando o compose;
+  
+  - Swagger documentação APIs;<br><br>
   
   #### Instruções inicialização e execução - (aplicação e database)
   ###### Utilizando docker-compose com MongoDB:
