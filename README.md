@@ -41,11 +41,12 @@
    Logo após, inicializará a aplicação ```app-wishlist```, junto com uma instância do MongoDB dockerizada (nesse momento será criado apenas uma collection denominado ```wishlist``` no banco de dados).
    
    Com a finalidade de gerenciar, registrar e efetuar as operações relacionadas a lista de desejos a partir da url: [app-wishlist](http://localhost:8095/v1/wishlist).
-   
+  <br><br>
+     
   #### Endpoints: 
-  <br>
-  Utilizando a ferramenta de documentação de endpoints ```Swagger```, pode-se visualizar todos os endpoints disponíveis. Basta acessar a documentação da API via [Swagger](http://localhost:8095/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config). 
-  <br><br> Logo após inicialização da aplicação. De sorte que, segue a lista de alguns endpoints para conhecimento: 
+  Logo após inicialização da aplicação, utilizando a ferramenta de documentação de apis ```Swagger```, pode-se visualizar todas as rotas disponíveis.
+  Basta acessar a documentação da API via [Swagger](http://localhost:8095/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config). 
+  <br><br> Todavia, alguns endpoints para conhecimento: 
   
   - Retornar uma coleção de wishlist completa, com os produtos existentes:
     - `http://localhost:8080/v1/wishlist`
@@ -53,7 +54,7 @@
   - Retornar uma única wishlist com todos os produtos adicionados, a partir de um identificador único:
     - `http://localhost:8080/v1/wishlist/{id}`
       
- Entre outros, aos quais podem ser identificados no endereço fornecido pelo [Swagger](http://localhost:8095/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config).
+ Como dito antes, as demais rotas podem ser visualizadas no endereço fornecido pelo [Swagger](http://localhost:8095/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config).
  <br><br>
 
   

@@ -3,6 +3,7 @@ package br.com.luizalabs.wishlist.products.delivery.events;
 import br.com.luizalabs.wishlist.products.shared.WishlistMapper;
 import br.com.luizalabs.wishlist.products.delivery.entities.wishlist.response.WishlistResponse;
 import br.com.luizalabs.wishlist.products.core.port.WishlistReportPort;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ public class StreamEventsController {
     private static final Integer DURATION_SECONDS = 5;
 
     @GetMapping(value = "/wishlist/produces", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Returns all existing wishlists", tags = "events-stream")
     public Flux<Tuple2<Long, WishlistResponse>> getWishlistByEvents() {
         log.info("[luizalabs-wishlist-products] [events]");
         log.info("[luizalabs-wishlist-products] [events] | Running event stream wishlist(s)");

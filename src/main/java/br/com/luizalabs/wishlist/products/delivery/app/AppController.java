@@ -1,5 +1,13 @@
 package br.com.luizalabs.wishlist.products.delivery.app;
 
+//import io.swagger.v3.oas.annotations.Operation;
+//import io.swagger.v3.oas.annotations.media.Content;
+//import io.swagger.v3.oas.annotations.media.Schema;
+//import io.swagger.v3.oas.annotations.responses.ApiResponse;
+//import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +31,10 @@ public class AppController {
     private String appMessage;
 
     @GetMapping
+    @Operation(summary = "Get api its works", responses = {
+            @ApiResponse(description = "Get message success", responseCode = "200",
+                    content = @Content(mediaType = "application/json"))
+    }, tags = "app")
     public ResponseEntity<String> getAppMessage() {
         log.info("[luizalabs-wishlist-products] [events] | {}", appMessage);
         return ResponseEntity.ok(appMessage);

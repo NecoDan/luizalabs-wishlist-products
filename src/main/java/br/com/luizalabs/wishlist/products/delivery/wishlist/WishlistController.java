@@ -10,6 +10,7 @@ import br.com.luizalabs.wishlist.products.delivery.entities.wishlist.response.Pr
 import br.com.luizalabs.wishlist.products.delivery.entities.wishlist.response.ResponseAccepted;
 import br.com.luizalabs.wishlist.products.delivery.entities.wishlist.response.WishlistResponse;
 import br.com.luizalabs.wishlist.products.shared.WishlistMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,7 @@ public class WishlistController {
     private final WishlistMapper wishlistMapper;
 
     @PostMapping
+    @Operation(summary = "Call to create wish list.", tags = "wishlist")
     public Mono<ResponseEntity<WishlistResponse>> createWishList(@RequestBody @Valid WishlistRequest wishlistRequest) {
 
         log.info("[luizalabs-wishlist-products] | Call to create wishtlist: {}.", wishlistRequest);
@@ -53,6 +55,7 @@ public class WishlistController {
     }
 
     @GetMapping
+    @Operation(summary = "Returns a list of all wish list.", tags = "wishlist")
     public Flux<WishlistResponse> findAll() {
 
         log.info("[luizalabs-wishlist-products] | Searching all existing wish list");
@@ -62,6 +65,7 @@ public class WishlistController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Returns a specific wish list by id", tags = "wishlist")
     public Mono<WishlistResponse> findById(@PathVariable("id") String id) {
 
         log.info("[luizalabs-wishlist-products] | Searching for an existing Wish list by id");
@@ -72,6 +76,7 @@ public class WishlistController {
     }
 
     @PutMapping("/add_product/{id_wishlist}")
+    @Operation(summary = "Call to add a single product to an existing wish list.", tags = "wishlist")
     public Mono<ResponseEntity<ResponseAccepted>> addProductBy(@Valid @PathVariable("id_wishlist") String idWishlist,
                                                                @Valid @RequestBody ProductRequest request) {
 
@@ -85,6 +90,7 @@ public class WishlistController {
     }
 
     @DeleteMapping("/remove_product/{id_wishlist}")
+    @Operation(summary = "Call to remove a single product to an existing wish list.", tags = "wishlist")
     public Mono<ResponseEntity<ResponseAccepted>> deleteProductBy(@Valid @PathVariable("id_wishlist") String idWishlist,
                                                                   @Valid @RequestBody ProductRemoveRequest request) {
 
@@ -100,6 +106,7 @@ public class WishlistController {
     }
 
     @GetMapping("/find_product")
+    @Operation(summary = "Return a product contained in all wishlists associated with the customer.", tags = "wishlist")
     public Mono<ProductItemWishlistResponse> findProductBy(@Valid @RequestParam("client_id") String clientId,
                                                            @Valid @RequestParam("product_id") String productId) {
 
